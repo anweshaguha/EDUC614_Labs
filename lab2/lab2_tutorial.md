@@ -1,52 +1,48 @@
-Lab 2 Tutorial
-========================================================
+---
+title: "Lab 2 Tutorial"
 author: Janette Avelar & Anwesha Guha
 date: 1/25/2022
-autosize: true
+output: ioslides_presentation
+---
 
-Intro
-========================================================
+# Intro
 This week we will go over descriptive statistics.
 
 Note: **All material is taken from Dr. Zopluoglu's 2021 EDUC 614 materials and adapted for this year's course.**
 
-We have adapted it to slide format.
-Want to learn how we created slide presentations using R? [This tutorial](https://www.r-bloggers.com/2019/09/mastering-r-presentations/) is helpful.
+We have adapted it to slide format using R.
+Want to learn how we created R slide presentations? [This tutorial](https://www.r-bloggers.com/2019/09/mastering-r-presentations/) is helpful.
 
-Importing Data
-========================================================
+## Importing Data
 There are many ways of importing data into R depending on your taste and style. 
-In class, you practiced how to import data using `Import Dataset` functionality under the Environment tab. If you prefer doing it, go ahead and import the *Add.csv* file into R following the same instructions. 
+In class, you practiced how to import data using `Import Dataset` functionality under the Environment tab. 
+
+If you want to follow along, go ahead and import the *Add.csv* file into R following the same instructions. 
 
 Make sure you name the data object as *Add* because the rest of the code will assume your data object name in the Environment is Add.
 
-Importing Data
-========================================================
+## Importing Data
+
 In addition, I would also like to show you how you can import the same file with base functions using syntax. Below is how you can import the Add.csv file using the `read.csv` function. For more information, you can type `?read.csv` in the R console and read more about how to use this function.
 
 
 ```r
-  Add <- read.csv(file   = "B:/UO Teaching/EDUC614/Winter21/Week 3/Add.csv",
-                  header = TRUE)
+Add <- read.csv(file   = "~/Downloads/Add.csv",
+                header = TRUE)
 ```
-
-
-
 
 Note that "Add <- " indicates that we are asking R to create a new object with a name Add using the syntax followed by assignment sign, "<-". 
 
-Importing Data
-========================================================
+## Importing Data
 There are many arguments `read.csv` function can take. Here, I use two main arguments. The first one is indicating that the location of the file in my computer. 
 
-**file = "B:/UO Teaching/EDUC614/Winter21/Week 3/Add.csv"** provides the path for R to find the file I want to import.
+**file = "/Users/aguha/Downloads/Add.csv"** provides the path for R to find the file I want to import.
 
 The second argument is "header=TRUE". 
 
 This argument is a `logical` argument and can take only two values: TRUE or FALSE. In this case, we set header=TRUE` because the first line of the file has the column labels so R reads the first line as column names, then reads the rest of the lines as data. If you run this code in your console, you will see that it imports the file, and you will a new data object created in your Environment.
 
-After Importing Data
-========================================================
+## After Importing Data
 
 You can always do some quick checks when you import a new dataset. 
 You use str() function to check the internal structure of an R object.
@@ -57,21 +53,20 @@ str(Add)
 ```
 
 ```
-tibble [88 × 8] (S3: tbl_df/tbl/data.frame)
- $ CaseNum: num [1:88] 1 2 3 4 5 6 7 8 9 10 ...
- $ ADDSC  : num [1:88] 45 50 49 55 39 68 69 56 58 48 ...
- $ Sex    : num [1:88] 1 1 1 1 1 1 1 1 1 1 ...
- $ Repeat : num [1:88] 0 0 0 0 0 1 1 0 0 0 ...
- $ IQ     : num [1:88] 111 102 108 109 118 79 88 102 105 92 ...
- $ GPA    : num [1:88] 2.6 2.75 4 2.25 3 1.67 2.25 3.4 1.33 3.5 ...
- $ SocProb: num [1:88] 0 0 0 0 0 0 1 0 0 0 ...
- $ Dropout: num [1:88] 0 0 0 0 0 1 1 0 0 0 ...
+'data.frame':	88 obs. of  8 variables:
+ $ CaseNum: int  1 2 3 4 5 6 7 8 9 10 ...
+ $ ADDSC  : int  45 50 49 55 39 68 69 56 58 48 ...
+ $ Sex    : int  1 1 1 1 1 1 1 1 1 1 ...
+ $ Repeat : int  0 0 0 0 0 1 1 0 0 0 ...
+ $ IQ     : int  111 102 108 109 118 79 88 102 105 92 ...
+ $ GPA    : num  2.6 2.75 4 2.25 3 1.67 2.25 3.4 1.33 3.5 ...
+ $ SocProb: int  0 0 0 0 0 0 1 0 0 0 ...
+ $ Dropout: int  0 0 0 0 0 1 1 0 0 0 ...
 ```
 
 This indicates that "Add" is a data.frame object, has 88 observations (number of rows) and 8 variables (number of columns). It also provides a list of the variables in this data frame. You can see the name of the variables, type of the variables, and the first few values of the variables.
 
-After Importing Data
-========================================================
+## After Importing Data
 
 You can also explicitly call the names of the columns in this dataset using colnames() function.
 
@@ -92,8 +87,8 @@ You can always run the following code, and it will open your data as a new tab n
 View(Add)
 ```
 
-Dealing with Missing Data
-========================================================
+## Dealing with Missing Data
+
 Suppose, that you have certain values for certain variables that represent missing data. 
   
 In this dataset, we know that there are two variables with missingness: Repeat and Dropout
@@ -102,7 +97,80 @@ In this dataset, we know that there are two variables with missingness: Repeat a
   
   * 999 represents missingness for Dropout
   
-So, I will recode the data such that these values for this particular columns are converted to NA, the internal code R recognizes missingess. 
+So, I will recode the data such that these values for this particular columns are converted to NA, the internal code R recognizes missingness. 
 
-Slide
-========================================================
+
+```r
+Add$Sex[Add$Sex==9] <- NA
+Add$Sex[Add$Sex==99] <- NA
+
+Add$Dropout[Add$Dropout==999] <- NA
+```
+
+The code above uses base functions, taking the value that you specify for the variable and replacing with a different value (NA in this case).
+
+## Categorical Variables
+
+When you import a dataset, some categorical variables are labeled using strings, e.g. Yes/No, TRUE/FALSE, Asian/White/Hispanic/AmericanIndian/...
+     
+Most of the times, however, you will see numeric codes for these variables, and R recognizes them as numbers, which is not appropriate.
+     
+For instance, in this dataset, Repeat is coded as 0 and 1, and 0 means did not repeat, while 1 means repeated. Or, SocProb is also coded as 0 and 1, and 0 means No while1 means Yes. 
+     
+If you run str() on Add, you will see that all these variables are simply recognized as a numeric or integer variable:
+
+
+```r
+str(Add)
+```
+
+```
+'data.frame':	88 obs. of  8 variables:
+ $ CaseNum: int  1 2 3 4 5 6 7 8 9 10 ...
+ $ ADDSC  : int  45 50 49 55 39 68 69 56 58 48 ...
+ $ Sex    : int  1 1 1 1 1 1 1 1 1 1 ...
+ $ Repeat : int  0 0 0 0 0 1 1 0 0 0 ...
+ $ IQ     : int  111 102 108 109 118 79 88 102 105 92 ...
+ $ GPA    : num  2.6 2.75 4 2.25 3 1.67 2.25 3.4 1.33 3.5 ...
+ $ SocProb: int  0 0 0 0 0 0 1 0 0 0 ...
+ $ Dropout: int  0 0 0 0 0 1 1 0 0 0 ...
+```
+
+
+## Categorical Variables
+ 
+You should always consider converting these variables to Factor before you move forward with your analysis, as Factors are the accurate representation of categorical variables in R. We can convert any numeric variable to a Factor using the factor function.
+
+We will create a new column by converting the numeric version of these variables to factors by creating and appending a new column to the dataset. I will add .f extension for the new variable names so we can distinguish them from the original one. Let's start with Sex. In this dataset, Sex is coded as 1=male,2=female. 
+
+```r
+str(Add$Sex)
+```
+
+```
+ int [1:88] 1 1 1 1 1 1 1 1 1 1 ...
+```
+
+```r
+table(Add$Sex)
+```
+
+```
+
+ 1  2 
+51 31 
+```
+
+```r
+Add$Sex.f <- factor(x      = Add$Sex,
+                    levels = c(1,2),
+                    labels = c('Male','Female'))
+table(Add$Sex.f)
+```
+
+```
+
+  Male Female 
+    51     31 
+```
+

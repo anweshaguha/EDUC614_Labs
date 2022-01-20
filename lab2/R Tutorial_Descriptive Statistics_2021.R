@@ -370,7 +370,7 @@
   
 
 # There are many ways in R to calculate descriptive statistics. 
-# The one I most like is the describe() funtion from the psych package. 
+# The one I most like is the describe() function from the psych package. 
   
 # The code below will install the psych package into your computer. 
   # You have to do it only once.
