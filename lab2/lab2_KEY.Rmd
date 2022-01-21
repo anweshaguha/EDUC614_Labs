@@ -1,0 +1,199 @@
+---
+title: "Lab 2 Key"
+author: "Janette Avelar & Anwesha Guha"
+date: "1/21/2022"
+output: pdf_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Instructions:
+In this lab activity, you will use a subset of the ECLS-K dataset <https://nces.ed.gov/ecls/>. The dataset is available on the website in CSV format (ecls-k-sub.csv). There are many variables in this dataset. Most variables have two versions differentiated with the two letters in front of the variable name. When you see X1… in front of a variable, it indicates that it was measured during the Fall semester of Kindergarten. When you see X2… in front of a variable, it indicates that it was measured during the Spring semester of Kindergarten. For instance, while variable X1RSCALK5 is the IRT scale score from a reading assessment during the Fall semester of Kindergarten, X2RSCALK5 is the IRT scale score from a reading assessment during the Spring semester of Kindergarten.
+ 
+ You can check the manual at the following link for more detailed information about what kind of questions are used to measure each construct and how these scores were calculated.
+<https://nces.ed.gov/pubs2015/2015078.pdf>
+
+**Before answering the following questions...**
+1) Refer to the table in your Lab 2 document (**Appendix A**) indicating which numbers represent missing values for each variable in this data.
+2) You should re-code these values in R as missing before running any analyses. You don't have to recode all variables at once for this activity. Just read the questions, and only recode the variables for missing values you need for each question.
+
+## Let's get started.
+
+First, we'll open up our library with the packages we'll need:
+
+```{r library}
+library(here)
+library(tidyverse)
+library(car)
+library(psych)
+```
+
+Next, we'll import our data:
+
+```{r import data}
+here::here("data")
+ecls <- read_csv(here("data", "ecls-k-sub.csv"))
+```
+
+Now we'll recode the variables we need per the instructions.
+
+```{r recode variables}
+# With this method, I'm asking R to recode "-9" anywhere in the dataframe as a missing value (NA):
+ecls$X1RSCALK5[ecls$X1RSCALK5 == -9] <-NA
+ecls$X2RSCALK5[ecls$X2RSCALK5 == -9] <-NA
+ecls$X1MSCALK5[ecls$X1MSCALK5 == -9] <-NA
+ecls$X2MSCALK5[ecls$X2MSCALK5 == -9] <-NA
+```
+
+With our set-up complete, we can begin to tackle the questions.
+
+**Q1. (1pt) Compute the descriptive statistics for variables X1RSCALK5, X2RSCALK5, X1MSCALK5, X2MSCALK5. Then, complete the table below accordingly. Round the numbers to the second decimal when reporting.**
+
+To answer Q1, we need to call up the descriptive statistics for our variables.
+
+```{r question 1}
+describe(ecls$X1RSCALK5) #Fall Reading
+describe(ecls$X2RSCALK5) #Spring Reading
+describe(ecls$X1MSCALK5) #Fall Math
+describe(ecls$X2MSCALK5) #Spring Math
+```
+
+**Q2. (1pt) Create a histogram for each variable to show the distribution. Present all four histograms below.**
+
+For Q2, create the histograms in R, and export to Word from the "Plots" pane. You an also save the plot as an image using the `ggsave()` function. Type `?ggsave()` to learn more.
+
+```{r question 2}
+# Fall Reading histogram
+hist(x      = ecls$X1RSCALK5,
+     freq   = TRUE,
+     col    = 'white',
+     border = 'black',
+     xlab   = 'Reading Score',
+     main   = 'Fall Reading Scores')
+
+# Spring Reading Histogram
+hist(x      = ecls$X2RSCALK5,
+     freq   = TRUE,
+     col    = 'white',
+     border = 'black',
+     xlab   = 'Reading Score',
+     main   = 'Spring Reading Scores')
+
+# Fall Math Histogram
+hist(x      = ecls$X1MSCALK5,
+     freq   = TRUE,
+     col    = 'white',
+     border = 'black',
+     xlab   = 'Math Scores',
+     main   = 'Fall Math Scores')
+
+# Spring Math Histogram
+hist(x      = ecls$X2MSCALK5,
+     freq   = TRUE,
+     col    = 'white',
+     border = 'black',
+     xlab   = 'Math Scores',
+     main   = 'Spring Math Scores')
+```
+
+**Q3. (1pt) Create a boxplot for each variable to show the distribution. Present all four boxplots below.**
+
+For Q3, we'll do the same thing as Q2, but using boxplots instead.
+
+```{r question 3}
+# Fall Reading Box Plot
+boxplot(x       = ecls$X1RSCALK5,
+        main    = 'Fall Reading Scores',
+        xlab    = 'Reading Score',
+        col     = 'white',
+        horizontal = TRUE)
+
+# Spring Reading Box Plot
+boxplot(x       = ecls$X2RSCALK5,
+        main    = 'Spring Reading Scores',
+        xlab    = 'Reading Score',
+        col     = 'white',
+        horizontal = TRUE)
+
+# Fall Math Box Plot
+boxplot(x       = ecls$X1MSCALK5,
+        main    = 'Fall Math Scores',
+        xlab    = 'Math Score',
+        col     = 'white',
+        horizontal = TRUE)
+
+# Spring Math Box Plot
+boxplot(x       = ecls$X2MSCALK5,
+        main    = 'Spring Math Scores',
+        xlab    = 'Math Score',
+        col     = 'white',
+        horizontal = TRUE)
+```
+
+**Q4. (2pt) Discuss the distribution of four variables in terms of skewness and kurtosis. What would you say about these distributions? Use all information you have from Q1, Q2, and Q3.**
+
+Reading score distribution for the fall and spring are both skewed to the right, with the fall scores more considerably pronounced than the spring. Both fall and spring display a leptokurtic distribution.
+
+Math score distribution for the fall is similarly positively skewed and displays a leptokurtic distribution, which decreases in both respects considerably come spring. 
+
+**Q5. (1pt) Report the first, second, and third quartile (25th, 50th, and 75th percentiles) for these four variables.**
+
+```{r question 5}
+# Fall Reading Quantiles
+quantile(x = ecls$X1RSCALK5,
+         probs = c(.25,.50,.75),
+         na.rm = TRUE) # this argument tells R to ignore NAs and compute quantiles anyway
+
+# Spring Reading Quantiles
+quantile(x = ecls$X2RSCALK5,
+         probs = c(.25,.50,.75),
+         na.rm = TRUE)
+
+# Fall Math Quantiles
+quantile(x = ecls$X1MSCALK5,
+         probs = c(.25,.50,.75),
+         na.rm = TRUE)
+
+# Spring Math Quantiles
+quantile(x = ecls$X2MSCALK5,
+         probs = c(.25,.50,.75),
+         na.rm = TRUE)
+```
+
+**Q6. (1pt) Compute the descriptive statistics for variable X1RSCALK5 conditional on the home language status. Then, complete the table below accordingly. Round the numbers to the second decimal when reporting.**
+
+In order to answer question 6, we need to convert the home language status variable 'X12LANGST' to a factor so that R "knows" the structure of the groups and can return the descriptive statistics to us conditional on the home language status.
+
+We'll tackle this by converting NAs, like we did earlier for our test score variables, and then converting the variable to a factor with multiple levels.
+
+```{r question 6}
+# Convert NAs in X12LANGST (home language status)
+ecls$X12LANGST[ecls$X12LANGST == -9] <-NA
+
+# Look at variable to determine the levels we'll need
+str(ecls$X12LANGST)
+
+# Factor the level using the 3 groups that came up:
+ecls$X12LANGST <- factor(ecls$X12LANGST, 
+                         levels=c(1,2,3),
+                         labels=c("ELL", "Non-ELL", "Unspecified"))
+
+# Pull up stats by language status group:
+describeBy(ecls$X1RSCALK5, 
+           group = ecls$X12LANGST)
+```
+
+**Q7. (1pt) Create a boxplot displaying the Fall Kindergarten Assessment scores conditional on home language status (one boxplot for each subgroup).**
+
+For Q7, we'll approach it much like we did Q3. The only difference is we'll use `~` to tell R that we want our boxplot created conditional on another variable. Since the language status variable we modified earlier has been converted to a factor with specified levels, the boxplot function will return a plot with 3 boxplots--one for each factor level (i.e., ELL, non-ELL, and unspecified groups).
+
+```{r question 7}
+# fall reading score by language status boxplot
+boxplot(ecls$X1RSCALK5 ~ ecls$X12LANGST,
+        horizontal = TRUE)
+```
+
