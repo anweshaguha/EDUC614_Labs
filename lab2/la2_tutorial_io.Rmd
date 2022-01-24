@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Intro
 This week we will go over descriptive statistics.
 
-Note: **All material is taken from Dr. Zopluoglu's 2021 EDUC 614 materials and adapted for this year's course.**
+Note: **All material is taken from Dr. Zopluoglu's 2021 EDUC 614 materials and adapted for this year's course by Anwesha for this week.**
 
 We have adapted it to slide format using R.
 Want to learn how we created R slide presentations? [This tutorial](https://www.r-bloggers.com/2019/09/mastering-r-presentations/) is helpful.
