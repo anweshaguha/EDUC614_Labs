@@ -1,11 +1,12 @@
 ---
 title: "Lab 2 Tutorial"
-author: Janette Avelar & Anwesha Guha
-date: 1/25/2022
-output: 
+author: "Janette Avelar & Anwesha Guha"
+date: "1/25/2022"
+output:
+  beamer_presentation: default
   ioslides_presentation:
-    widescreen: true
-    smaller: true
+    widescreen: yes
+    smaller: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -15,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Intro
 This week we will go over descriptive statistics.
 
-Note: **All material is taken from Dr. Zopluoglu's 2021 EDUC 614 materials and adapted for this year's course.**
+Note: **All material is taken from Dr. Zopluoglu's 2021 EDUC 614 materials and adapted for this year's course by Anwesha for this week.**
 
 We have adapted it to slide format using R.
 Want to learn how we created R slide presentations? [This tutorial](https://www.r-bloggers.com/2019/09/mastering-r-presentations/) is helpful.
@@ -79,9 +80,7 @@ View(Add)
 
 ## Dealing with Missing Data
 
-Suppose, that you have certain values for certain variables that represent missing data. 
-  
-In this dataset, we know that there are two variables with missingness: Repeat and Dropout
+Suppose, that you have certain values for certain variables that represent missing data. In this dataset, we know that there are two variables with missingness: Repeat and Dropout
   
   * 9  and 99 represent missingness for Sex
   
@@ -102,12 +101,15 @@ The code above uses base functions, taking the value that you specify for the va
 
 ## Categorical Variables
 
-When you import a dataset, some categorical variables are labeled using strings, e.g. Yes/No, TRUE/FALSE, Asian/White/Hispanic/AmericanIndian/...
+When you import a dataset, some categorical variables are labeled using strings, e.g. Yes/No, TRUE/FALSE, Asian/White/Hispanic/American Indian/...
      
 Most of the times, however, you will see numeric codes for these variables, and R recognizes them as numbers, which is not appropriate.
      
 For instance, in this dataset, Repeat is coded as 0 and 1, and 0 means did not repeat, while 1 means repeated. Or, SocProb is also coded as 0 and 1, and 0 means No while1 means Yes. 
-     
+
+
+## Categorical Variables
+
 If you run str() on Add, you will see that all these variables are simply recognized as a numeric or integer variable:
 
 ```{r}
@@ -117,9 +119,9 @@ str(Add)
 
 ## Categorical Variables
  
-You should always consider converting these variables to Factor before you move forward with your analysis, as Factors are the accurate representation of categorical variables in R. We can convert any numeric variable to a Factor using the factor function.
+Convert these variables to Factor before you move forward with your analysis, as Factors are the accurate representation of categorical variables in R. We can convert any numeric variable to a Factor using the factor function.
 
-We will create a new column by converting the numeric version of these variables to factors by creating and appending a new column to the dataset. I will add .f extension for the new variable names so we can distinguish them from the original one. Let's start with Sex. In this dataset, Sex is coded as 1=male, 2=female. 
+We will create a new column by converting the numeric version of these variables to factors by creating and appending a new column to the dataset. I will add .f extension for the new variable names so we can distinguish them from the original. Let's start with Sex, coded as 1=male, 2=female. 
 ```{r}
 str(Add$Sex)
 table(Add$Sex)
@@ -127,19 +129,29 @@ table(Add$Sex)
 
 ## Categorical Variables
 
+Convert to factor.
 ```{r}
 Add$Sex.f <- factor(x      = Add$Sex,
                     levels = c(1,2),
                     labels = c('Male','Female'))
 table(Add$Sex.f)
 ```
-You should see that all 1s are now Male, and All 2s are now Female.
+
+## Categorical Variables
+
+All 1s are now Male, and All 2s are now Female.
 
 - levels = c(1,2), this indicates that the original numeric variable contains two values in the dataset 1 and 2
      
-- labels = c('Male','Female'), this indicates the matching labels I want to use for 1 and 2. These labels are arbitrary. For instance, instead, you can say labels = c('M','F'), and 1 and 2 will be represented by M and F labels, respectively. It is up to you if the data dictionary does not already indicate the corresponding values.
+- labels = c('Male','Female'), this indicates the matching labels I want to use for 1 and 2. These labels are arbitrary. For instance, you can say labels = c('F','M'), and 1 and 2 will be represented by F and M labels, respectively. It is up to you if the data dictionary does not already indicate the corresponding values.
+
+## Categorical Variables
 
 Also, if you run str(Add) now, you should notice the new variable you compute (Sex.f) is recognized as a Factor with 2 levels.
+```{r}
+str(Add)
+```
+
 
 ## Categorical Variables
 
@@ -150,12 +162,9 @@ Add$Repeat.f <- factor(x      = Add$Repeat,
                        levels = c(0,1),
                        labels = c('No','Yes'))
          
-         
-         
 Add$SocProb.f <- factor(x     = Add$SocProb,
                         levels = c(0,1),
                         labels = c('No','Yes'))
-         
          
 Add$Dropout.f <- factor(x     = Add$Dropout,
                         levels = c(0,1),
@@ -166,7 +175,6 @@ Add$Dropout.f <- factor(x     = Add$Dropout,
 
 Then, check the dataset with the new variables.
 ```{r}
-# View(Add)
 str(Add)
 ```
 
@@ -238,28 +246,23 @@ Add[10:15, 2:5]
 
 - 10:20 before comma indicates that we request Row 10 to Row 20
 - 2:5 after comma indicates that we request Column 2 to Column 5
-  
-So, this returns a certain segment of the whole dataset
 
 ## Indexing in a Data Frame
 
-What if the rows and columns you would like to see are not consecutive? For instance, let's say you want to see Row 5, Row 10, Row 35, and Row 80
+What if the rows and columns you would like to see are not consecutive? For instance, let's say you want to see Row 10, Row 35, and Row 80. Notice that c(10,35,80) before comma inside the brackets provides a list of row numbers I want. c() is special way in R to create a vector of numbers. There is no number specified after comma inside the brackets, so it means we request R to give all the columns in the data.
 ```{r}
-Add[c(5,10,35,80),]
+Add[c(10,35,80),]
 ```
 
-Notice that c(5,10,35,80) before comma inside the brackets provides a list of row numbers I want. c() is special way in R to create a vector of numbers
-  
-There is no number specified after comma inside the brackets, so it means we request R to give all the columns in the data
 
 ## Indexing in a Data Frame
 
-We can do the same thing with columns. For instance, let's say you want to see Column 1, Column 2, and Column 6
+We can do the same thing with columns. For instance, let's say you want to see Column 1, Column 2, and Column 6. Notice that c(1,2,6) after comma inside the brackets provides a list of column numbers I want. There is no number specified before comma inside the brackets, so it means we request R to give all the rows in the data.
+
 ```{r}
 Add[,c(1,2,6)]
 ```
 
-Notice that c(1,2,6) after comma inside the brackets provides a list of column numbers I want. There is no number specified before comma inside the brackets, so it means we request R to give all the rows in the data.
 
 ## Indexing in a Data Frame
 
@@ -290,11 +293,8 @@ install.packages('psych')
 ```
 
 Next, you have to load the package to the R environment. You have to do it every time you close and reopen RStudio. You can use either function below.
-```{r}
-require(psych)
-```
-
-```{r}
+```{r message=FALSE, warning=FALSE}
+require(psych) ##OR
 library(psych)
 ```
 
@@ -311,7 +311,7 @@ Note that it only make sense to compute descriptive variables for numeric variab
 
 ## Computing Descriptive Statistics
 
-Suppose you want to compute the descriptive statistics for GPA variable
+Suppose you want to compute the descriptive statistics for GPA variable.
 
 ```{r}
 describe(Add$GPA)
@@ -328,9 +328,7 @@ describe(Add[,6])
 
 ## Computing Descriptive Statistics
 
-You can compute the descriptive statistics for many variables. Suppose you want to compute the descriptive statistics for ADDSC, GPA, and IQ variables in this dataset.
-
-The version below will provide the descriptive statistics only for the listed variables.
+You can compute the descriptive statistics for many variables. Suppose you want to compute the descriptive statistics for ADDSC, GPA, and IQ variables in this dataset. The version below will provide the descriptive statistics only for the listed variables.
 ```{r}
 describe(Add[,c('GPA','IQ','ADDSC')])
 
@@ -348,13 +346,15 @@ Sometimes, you may want to compute conditional statistics. For instance, suppose
 
 ## Computing Descriptive Statistics
 
-Then, compute the descriprive statistics of GPA for students with and without social problems
+Then, compute the descriptive statistics of GPA for students with and without social problems.
 ```{r}
 describeBy(x     = Add$GPA,
            group = Add$SocProb.f)
 ```
 
-Here, I use two arguments for describeBy() function
+## Computing Descriptive Statistics
+
+In the previous slide, I use two arguments for describeBy() function.
   
 - x = Add$GPA, specifies the outcome variable you want to compute desc. stats
 - group = Add$Dropout.f, specifies the grouping variable
@@ -383,6 +383,9 @@ table(Add$Sex.f)
 ```
 
 This indicates that there are 51 individuals in the datasets coded as Male, and 31 individuals coded as Female.
+
+## Computing Descriptive Statistics
+
 ```{r}
 table(Add$SocProb.f)
 ```
@@ -396,8 +399,6 @@ You can use table() function to get frequencies for numeric variables, but we do
 If you want to create z-scores for numeric variables you can use scale() function. Below syntax will create and append new variables for standardized scores for numeric variables in the data.
 
 ```{r}
-# ?scale()
-  
 Add$GPA.z   <- scale(Add$GPA)
   
 Add$IQ.z    <- scale(Add$IQ)
@@ -416,7 +417,18 @@ describe(Add[,c('GPA.z','IQ.z','ADDSC.z')])
 ## Histogram
 
 You can use hist() function to create a histogram and impose a normal density on it. For example, create a histogram of GPA.
-```{r}
+```{r echo=TRUE, eval=FALSE}
+hist(x      = Add$GPA,
+     freq   = TRUE,
+     col    = 'white',
+     border = 'black',
+     xlab   = 'Grade Point Average',
+     main   = 'My first histogram')
+```
+
+## Histogram
+
+```{r echo=FALSE}
 hist(x      = Add$GPA,
      freq   = TRUE,
      col    = 'white',
@@ -429,7 +441,18 @@ hist(x      = Add$GPA,
 
 You can change the fill color and border color, you can use any HEX value: https://htmlcolorcodes.com/
 
-```{r}
+```{r eval=FALSE, echo=TRUE}
+hist(x      = Add$GPA,
+     freq   = TRUE,
+     col    = '#BECA31',
+     border = '#3152CA',
+     xlab   = 'Grade Point Average',
+     main   = 'My first histogram')
+```
+
+## Histogram
+
+```{r echo=FALSE}
 hist(x      = Add$GPA,
      freq   = TRUE,
      col    = '#BECA31',
@@ -476,7 +499,16 @@ curve(expr = dnorm(x, mean=2.46, sd=0.86),
 ## Boxplot
 
 You can use boxplot() function to create a boxplot of, for example, GPA. See ?boxplot to see which values you can modify and add, like color, title, etc.
-```{r}
+```{r eval=FALSE, echo=TRUE}
+boxplot(x       = Add$GPA,
+        main    = 'My first boxplot',
+        xlab    = 'Grade Point Average',
+        col     = 'white')
+```
+
+## Boxplot
+
+```{r echo=FALSE}
 boxplot(x       = Add$GPA,
         main    = 'My first boxplot',
         xlab    = 'Grade Point Average',
