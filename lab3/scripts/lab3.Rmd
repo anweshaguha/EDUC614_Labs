@@ -1,0 +1,23 @@
+---
+title: "Lab 3"
+author: "Anwesha Guha"
+date: "1/25/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Create large random sample. Call it the population.
+## Report population descriptive statistics (mean, sd, skew, kurtosis)
+## Ask students to create a histogram of data
+## note: ideally population is skewed -- initial thought is to manipulate seed to get most skewed data, but there is probably a better way
+
+# Randomly sample with n = 10 (or less), calculate the mean and sd
+## Do this 30 times (maybe we can write a loop for them?)
+## Create histogram of sampling distribution & report descriptive stats
+## What do you expect the mean and sd of the hypothetical sampling distribution to be if you did it infinte times instead of 30?
+
+## Check the code above by drawing 1,000,000 random samples of size of 10 from population
+## Calculate descriptive stats. Do they match with population? Why or why not?
