@@ -1,6 +1,6 @@
 ---
 title: "Lab 3"
-author: "Anwesha Guha"
+author: "Anwesha Guha & Janette Avelar"
 date: "1/25/2022"
 output: html_document
 ---
@@ -9,15 +9,77 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Create large random sample. Call it the population.
-## Report population descriptive statistics (mean, sd, skew, kurtosis)
-## Ask students to create a histogram of data
-## note: ideally population is skewed -- initial thought is to manipulate seed to get most skewed data, but there is probably a better way
+For lab 3, we're going to be exploring the concepts of normal distribution and sampling distribution by creating our own custom population and samples using R. We have provided the necessary code for you to create the population and pull samples, but expect you to draw from previous labs and class materials to answer the following questions.  
 
-# Randomly sample with n = 10 (or less), calculate the mean and sd
-## Do this 30 times (maybe we can write a loop for them?)
-## Create histogram of sampling distribution & report descriptive stats
-## What do you expect the mean and sd of the hypothetical sampling distribution to be if you did it infinte times instead of 30?
+The first thing we'll do is create a large random sample which we'll call the population:
 
-## Check the code above by drawing 1,000,000 random samples of size of 10 from population
-## Calculate descriptive stats. Do they match with population? Why or why not?
+```{r population}
+# note: ideally population is skewed -- initial thought is to manipulate seed to get most skewed data, but there is probably a better way
+```
+
+**Question 1:** Report the descriptive statistics for your population.  
+Mean:  
+Median:  
+Standard deviation:  
+Skew:  
+Kurtosis:  
+
+**Question 2:** Create a histogram for your population data.
+
+```{r pop hist}
+
+```
+
+Now we're going to generate a random sample of 10 from our population (n=10).
+
+```{r sample 1}
+
+```
+
+**Question 3:** Report the mean and standard deviation for your sample.  
+Mean:  
+SD:  
+
+We're going to generate a random sample of 10 again, but this time we'll do it 30 times.  
+
+```{r sample x30}
+#(maybe we can write a loop for them?)
+```
+
+**Question 4:** Report the descriptive statistics for your sampling distribution.  
+Mean:  
+Median:  
+SD:  
+Skew:  
+Kurtosis:  
+
+**Question 5:** Create a histogram for your sampling distribution.
+
+```{r sample distribution hist}
+
+```
+
+**Question 6:** Suppose that you randomly sample from your population with a size of 10 and compute the mean for each sample. You repeat this an infinite number of times. What would you expect the mean and standard deviation of your sampling distribution to be? Compute the mean and standard deviation of the hypothetical sampling distribution and explain your reasoning.  
+
+
+
+
+
+
+
+Let's check our work by drawing 1,000,000 random samples of 10 from our population.  
+
+```{r sample 1,000,000}
+
+```
+
+**Question 7:** Calculate the descriptive statistics for your 1,000,000 samples. Compare them to the descriptive statistics of your sampling distribution in questions 1 and 2. Do they match or not? Explain why you think that is.  
+
+
+
+
+
+**Question 8:** The amount of money college students spend each semester on textbooks is normally distributed with a mean of $195 and a standard deviation of $20. Suppose you take a random sample of 100 college students from this population. There would be a 68% chance that the sample mean for the amount spent on textbooks would be between what 2 numbers?  
+
+
+
