@@ -1,0 +1,20 @@
+---
+title: "Lab 4 Tutorial"
+author: "Janette Avelar & Anwesha Guha"
+date: "1/25/2022"
+output:
+  ioslides_presentation:
+    widescreen: yes
+    smaller: no
+  html_document:
+    df_print: paged
+  beamer_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# One Sample t-test
+
+## 
