@@ -1,62 +1,106 @@
 ---
-title: "Lab 3"
+title: "Lab 3 Key"
 author: "Anwesha Guha & Janette Avelar"
 date: "1/25/2022"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-For lab 3, we're going to be exploring the concepts of normal distribution and sampling distribution by creating our own custom population and samples using R. We have provided the necessary code for you to create the population and pull samples, but expect you to draw from previous labs and class materials to answer the following questions.  
+For lab 3, we're going to be exploring the concepts of normal distribution and sampling distribution by creating our own custom population and samples using R. We have provided the necessary code for you to create the population and pull samples, but you are expected to draw from previous labs and class materials to answer the following questions.  
 
-The first thing we'll do is create a large random sample which we'll call the population:
+
 
 ```{r population}
-# note: ideally population is skewed -- initial thought is to manipulate seed to get most skewed data, but there is probably a better way
+library(rio)
+library(here)
+ecls <- import(here("data", "ecls-k-sub.csv"))
 ```
 
-**Question 1:** Report the descriptive statistics for your population.  
-Mean:  
-Median:  
-Standard deviation:  
-Skew:  
-Kurtosis:  
+Even though X12SESL already has quite a few NAs, there are still -9 that you need to recode to NA.
+```{r}
+ecls$X12SESL[ecls$X12SESL == -9] <- NA
+```
+
+
+**Question 1:** Report the descriptive statistics for your population, `airlines$incidents_00_14`.  
+
+```{r pop descriptives}
+library(psych)
+describe(ecls$X12SESL)
+```
+
+Mean:  -0.04
+Median:  -0.14
+Standard deviation:  0.82
+Skew:  0.28
+Kurtosis:  -0.41
 
 **Question 2:** Create a histogram for your population data.
 
-```{r pop hist}
-
+```{r population hist}
+hist(ecls$X12SESL)
 ```
 
-Now we're going to generate a random sample of 10 from our population (n=10).
+**Question 3:** Now we're going to generate a random sample of 10 from our population (n=10).
 
-```{r sample 1}
+```{r sample 10}
+set.seed(100)
 
+sample_10 <- sample(ecls$X12SESL, 10, replace = TRUE)
+
+describe(sample_10)
 ```
 
-**Question 3:** Report the mean and standard deviation for your sample.  
-Mean:  
-SD:  
+Report the descriptive statistics for your sample.  
+Mean:  0.12
+Median:  0.27
+Standard deviation:  0.74
+Skew:  -0.3
+Kurtosis:  -1.63
 
-We're going to generate a random sample of 10 again, but this time we'll do it 30 times.  
+```{r sample 30}
+set.seed(100)
+
+sample_30 <- sample(ecls$X12SESL, 30, replace = TRUE)
+
+describe(sample_30)
+```
+Mean:  0.24
+Median:  0.28
+Standard deviation:  0.74
+Skew:  0.09
+Kurtosis:  -1.12
+
+**Question 4:** We're going to generate a random sample of 10 again, but this time we'll do it 30 times.  
 
 ```{r sample x30}
-#(maybe we can write a loop for them?)
+set.seed(100)
+
+samples_10_30 <- replicate(30, sample(ecls$X12SESL, 10, replace = TRUE))
+describe(samples_10_30)
 ```
 
-**Question 4:** Report the descriptive statistics for your sampling distribution.  
+Report the following descriptive statistics for your sampling distribution.  
+```{r}
+mean(samples_10_30, na.rm = TRUE)
+median(samples_10_30, na.rm = TRUE)
+sd(samples_10_30, na.rm = TRUE)
+```
+
 Mean:  
 Median:  
 SD:  
-Skew:  
-Kurtosis:  
 
 **Question 5:** Create a histogram for your sampling distribution.
 
 ```{r sample distribution hist}
-
+hist(samples_30)
 ```
 
 **Question 6:** Suppose that you randomly sample from your population with a size of 10 and compute the mean for each sample. You repeat this an infinite number of times. What would you expect the mean and standard deviation of your sampling distribution to be? Compute the mean and standard deviation of the hypothetical sampling distribution and explain your reasoning.  
@@ -66,20 +110,18 @@ Kurtosis:
 
 
 
+**Question 7:** Let's check our work by drawing 10,000 random samples of 10 from our population.  
 
-Let's check our work by drawing 1,000,000 random samples of 10 from our population.  
-
-```{r sample 1,000,000}
-
+```{r sample 10,000}
+set.seed(100)
+samples_mil <- replicate(10000, sample(airlines$incidents_00_14, 10, replace = TRUE))
 ```
 
-**Question 7:** Calculate the descriptive statistics for your 1,000,000 samples. Compare them to the descriptive statistics of your sampling distribution in questions 1 and 2. Do they match or not? Explain why you think that is.  
-
-
-
-
-
-**Question 8:** The amount of money college students spend each semester on textbooks is normally distributed with a mean of $195 and a standard deviation of $20. Suppose you take a random sample of 100 college students from this population. There would be a 68% chance that the sample mean for the amount spent on textbooks would be between what 2 numbers?  
-
+Calculate the descriptive statistics for your 1,000,000 samples. Compare them to the descriptive statistics of your sampling distribution in questions 1 and 2. Do they match or not? Explain why you think that is.  
+```{r}
+mean(samples_mil)
+sd(samples_mil)
+median(samples_mil)
+```
 
 
