@@ -12,8 +12,11 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-For lab 3, we're going to be exploring the concepts of normal distribution and sampling distribution by creating our own custom population and samples using R. We have provided the necessary code for you to create the population and pull samples, but you are expected to draw from previous labs and class materials to answer the following questions.  
+For Lab 3, we're going to be exploring the concepts of normal distribution and sampling distribution by creating our own custom population and samples using R. We have provided the necessary code for you to create the population and pull samples, but you are expected to draw from previous labs and class materials to answer the following questions.  
 
+The first thing we'll do is read in the ECLS-K data. Refer to Lab 2 on directions on how to import data files into R. 
+
+For the purpose of this assignment, we will be looking at the continuous SES measure for Kindergarten students in this dataset, which is the column X12SESL.
 
 
 ```{r population}
@@ -22,13 +25,13 @@ library(here)
 ecls <- import(here("data", "ecls-k-sub.csv"))
 ```
 
-Even though X12SESL already has quite a few NAs, there are still -9 that you need to recode to NA.
+Even though X12SESL already has quite a few NAs, there are still -9 that you need to recode to NA before getting started.
 ```{r}
 ecls$X12SESL[ecls$X12SESL == -9] <- NA
 ```
 
 
-**Question 1:** Report the descriptive statistics for your population, `airlines$incidents_00_14`.  
+**Question 1:** Find the descriptive statistics for your population data, `ecls-k-sub$X12SESL`. Remember to require the `psych` package before using the `describe` function. 
 
 ```{r pop descriptives}
 library(psych)
@@ -47,10 +50,10 @@ Kurtosis:  -0.41
 hist(ecls$X12SESL)
 ```
 
-**Question 3:** Now we're going to generate a random sample of 10 from our population (n=10).
+**Question 3:** Now we're going to generate a random sample of 10 from our population.
 
 ```{r sample 10}
-set.seed(100)
+set.seed(100) 
 
 sample_10 <- sample(ecls$X12SESL, 10, replace = TRUE)
 
@@ -58,6 +61,7 @@ describe(sample_10)
 ```
 
 Report the descriptive statistics for your sample.  
+
 Mean:  0.12
 Median:  0.27
 Standard deviation:  0.74
@@ -77,13 +81,14 @@ Standard deviation:  0.74
 Skew:  0.09
 Kurtosis:  -1.12
 
+Ideally, increasing the sample size would make the sample metrics look closer to those for the population. However, remember these samples are still small and random. You can try using different numbers for the `set.seed()` and you will get a variety of different results. So, we increase the number of times we sample the data to get a better estimate of the population below.
+
 **Question 4:** We're going to generate a random sample of 10 again, but this time we'll do it 30 times.  
 
 ```{r sample x30}
 set.seed(100)
 
 samples_10_30 <- replicate(30, sample(ecls$X12SESL, 10, replace = TRUE))
-describe(samples_10_30)
 ```
 
 Report the following descriptive statistics for your sampling distribution.  
@@ -93,20 +98,20 @@ median(samples_10_30, na.rm = TRUE)
 sd(samples_10_30, na.rm = TRUE)
 ```
 
-Mean:  
-Median:  
-SD:  
+Mean:  -0.0656
+Median:  -0.1185
+SD:  0.7979
 
 **Question 5:** Create a histogram for your sampling distribution.
 
 ```{r sample distribution hist}
-hist(samples_30)
+hist(samples_10_30)
 ```
 
 **Question 6:** Suppose that you randomly sample from your population with a size of 10 and compute the mean for each sample. You repeat this an infinite number of times. What would you expect the mean and standard deviation of your sampling distribution to be? Compute the mean and standard deviation of the hypothetical sampling distribution and explain your reasoning.  
 
 
-
+Mean of all means would remain same, at -0.04. The standard deviation would follow the following formula $sd= \frac{\sigma}{\sqrt(n)}$, so it would equal $\frac{0.82}{\sqrt(10)}=0.259$.
 
 
 
@@ -114,14 +119,32 @@ hist(samples_30)
 
 ```{r sample 10,000}
 set.seed(100)
-samples_mil <- replicate(10000, sample(airlines$incidents_00_14, 10, replace = TRUE))
+samples_more <- replicate(10000, sample(ecls$X12SESL, 10, replace = TRUE))
 ```
 
-Calculate the descriptive statistics for your 1,000,000 samples. Compare them to the descriptive statistics of your sampling distribution in questions 1 and 2. Do they match or not? Explain why you think that is.  
+Calculate the descriptive statistics for your 10,000 samples. Compare them to the descriptive statistics of your sampling distribution in questions 1 and 2. Do they match or not? Explain why you think that is.  
 ```{r}
-mean(samples_mil)
-sd(samples_mil)
-median(samples_mil)
+mean(samples_more, na.rm = TRUE)
+sd(samples_more, na.rm = TRUE)
+median(samples_more, na.rm = TRUE)
 ```
+Mean: -0.357
+Median: -0.13
+Standard deviation: 0.8175
+
+Each of these statistics are approaching the population values (Mean:  -0.04; Median:  -0.14; Standard deviation:  0.82). In an infinite sample, the descriptive statistics would totally match.
+
+Theoretical Questions:
+
+**Question 1:**
+A GRE score of 490 falls more than 3 standard deviations away from the mean. This student has a 0.0001% of getting in using GRE alone (z = 490 – 650/50 = -160/50 = -3.2 -> 0.0001%). While the local newspaper editor could write an article about favoritism if they were assuming the GRE was a significant determinant of admittance, they should also be careful (correlation $\neq$ causation) and consider that a variety of factors go into admittance, especially if the student had any other outstanding qualities (other than being related to a board of trustees member).
+
+**Question 2:**
+Between \$175 and \$215.
+
+According to the CLT, the mean of the sample would be the same as the population at \$195, and the standard deviation will be \$2, according to the following calculations:
+$$sd= \frac{\sigma}{\sqrt(n)}=\frac{20}{\sqrt(100)}=2$$
+Since 68% encompasses approximately one standard deviation, the amount spent on textbooks will be between \$193 and \$197, according to the following calculations:
+$$mean\pm1*sd=195\pm2$$
 
 
