@@ -20,13 +20,14 @@ For the purpose of this assignment, we will be looking at the continuous SES mea
 
 
 ```{r population}
-library(rio)
-library(here)
+require(rio)
+require(here)
 ecls <- import(here("data", "ecls-k-sub.csv"))
 ```
 
-Even though X12SESL already has quite a few NAs, there are still -9 that you need to recode to NA before getting started.
-```{r}
+Even though X12SESL already has quite a few NAs, there are still some values in the dataset for -9 that you need to recode as `NA` before getting started.
+
+```{r recode NAs}
 ecls$X12SESL[ecls$X12SESL == -9] <- NA
 ```
 
@@ -34,7 +35,7 @@ ecls$X12SESL[ecls$X12SESL == -9] <- NA
 **Question 1:** Find the descriptive statistics for your population data, `ecls-k-sub$X12SESL`. Remember to require the `psych` package before using the `describe` function. 
 
 ```{r pop descriptives}
-library(psych)
+require(psych)
 describe(ecls$X12SESL)
 ```
 
@@ -68,6 +69,8 @@ Standard deviation:  0.74
 Skew:  -0.3
 Kurtosis:  -1.63
 
+**Question 4:** Run the code again, replacing 10 with 30, to generate a random sample of 30 from our population.
+
 ```{r sample 30}
 set.seed(100)
 
@@ -75,15 +78,18 @@ sample_30 <- sample(ecls$X12SESL, 30, replace = TRUE)
 
 describe(sample_30)
 ```
+
+Report the descriptive statistics for that sample below. What changes?
+
 Mean:  0.24
 Median:  0.28
 Standard deviation:  0.74
 Skew:  0.09
 Kurtosis:  -1.12
 
-Ideally, increasing the sample size would make the sample metrics look closer to those for the population. However, remember these samples are still small and random. You can try using different numbers for the `set.seed()` and you will get a variety of different results. So, we increase the number of times we sample the data to get a better estimate of the population below.
+Ideally, increasing the sample size would make the sample metrics look closer to those for the parent population. However, remember these samples are still small and random (which also means your descriptive statistics above may differ slightly). You can try using different numbers for the `set.seed()` and you will get a variety of different results. So, we increase the number of times we sample the data to get a better estimate of the population below.
 
-**Question 4:** We're going to generate a random sample of 10 again, but this time we'll do it 30 times.  
+**Question 4:** We're now going to create a sampling distribution by generating 30 random samples of 10.  
 
 ```{r sample x30}
 set.seed(100)
@@ -91,7 +97,8 @@ set.seed(100)
 samples_10_30 <- replicate(30, sample(ecls$X12SESL, 10, replace = TRUE))
 ```
 
-Report the following descriptive statistics for your sampling distribution.  
+Report the mean, median, and standard deviation for your new sampling distribution. Note that your new sampling distribution `samples_10_30` is a dataset, and the `describe()` function will run descriptive statistics for each individual sample of 10 within it, rather than a summary of the totals. That's why we need to run the functions `mean()`, `median()`, and `sd()` to extract the values. *Be sure to include `na.rm = TRUE` in your argument!*  
+
 ```{r}
 mean(samples_10_30, na.rm = TRUE)
 median(samples_10_30, na.rm = TRUE)
@@ -111,7 +118,7 @@ hist(samples_10_30)
 **Question 6:** Suppose that you randomly sample from your population with a size of 10 and compute the mean for each sample. You repeat this an infinite number of times. What would you expect the mean and standard deviation of your sampling distribution to be? Compute the mean and standard deviation of the hypothetical sampling distribution and explain your reasoning.  
 
 
-Mean of all means would remain same, at -0.04. The standard deviation would follow the following formula $sd= \frac{\sigma}{\sqrt(n)}$, so it would equal $\frac{0.82}{\sqrt(10)}=0.259$.
+The mean of all means would remain the same, at -0.04. The standard deviation would follow the following formula $sd= \frac{\sigma}{\sqrt(n)}$, so it would equal $\frac{0.82}{\sqrt(10)}=0.259$.
 
 
 
@@ -132,15 +139,15 @@ Mean: -0.357
 Median: -0.13
 Standard deviation: 0.8175
 
-Each of these statistics are approaching the population values (Mean:  -0.04; Median:  -0.14; Standard deviation:  0.82). In an infinite sample, the descriptive statistics would totally match.
+Each of these statistics are approaching the population values (Mean:  -0.04; Median:  -0.14; Standard deviation:  0.82). In an infinite sample, the descriptive statistics would totally match.  
 
-Theoretical Questions:
+Theoretical Questions:  
 
-**Question 1:**
-A GRE score of 490 falls more than 3 standard deviations away from the mean. This student has a 0.0001% of getting in using GRE alone (z = 490 – 650/50 = -160/50 = -3.2 -> 0.0001%). While the local newspaper editor could write an article about favoritism if they were assuming the GRE was a significant determinant of admittance, they should also be careful (correlation $\neq$ causation) and consider that a variety of factors go into admittance, especially if the student had any other outstanding qualities (other than being related to a board of trustees member).
+**Question 1:** A recently admitted class of graduate students at a large state university has a mean of GRE verbal score of 650 with a standard deviation of 50. The scores are reasonably normally distributed. One student, whose mother just happens to be on the board of trustees, was admitted with a GRE score of 490. Should the local newspaper editor, who loves scandals, write a scathing editorial about favoritism?  
 
-**Question 2:**
-Between \$175 and \$215.
+A GRE score of 490 falls more than 3 standard deviations away from the mean. This student has a 0.0001% of getting in using GRE alone (z = 490 – 650/50 = -160/50 = -3.2 -> 0.0001%). While the local newspaper editor could write an article about favoritism if they were assuming the GRE was a significant determinant of admittance, they should also be careful (correlation $\neq$ causation) and consider that a variety of factors go into admittance, especially if the student had any other outstanding qualities (other than being related to a board of trustees member).  
+
+**Question 2:** The amount of money college students spend each semester on textbooks is normally distributed with a mean of \$195 and a standard deviation of \$20. Suppose you take a random sample of 100 college students from this population. There would be a 68% chance that the sample mean for the amount spent on textbooks would be between **\$175** and **\$215**.  
 
 According to the CLT, the mean of the sample would be the same as the population at \$195, and the standard deviation will be \$2, according to the following calculations:
 $$sd= \frac{\sigma}{\sqrt(n)}=\frac{20}{\sqrt(100)}=2$$
