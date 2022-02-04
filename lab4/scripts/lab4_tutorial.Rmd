@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # One Sample t-test
 
 ## Intro
-This week we will go over one sample t-tests using two different methods. Using a hypothetical dataset and research hypothesis, we will walk through how to conduct t-tests by hand and then by using the `t.test()` function.
+This week we will go over one sample t-tests using two different methods. Using a hypothetical dataset and research hypothesis, we will walk through how to conduct t-tests by hand and then by using the `oneSampleTTest()` function.
 
 Note: **All material is taken from Dr. Zopluoglu's 2021 EDUC 614 materials and adapted for this year's course.**
 
@@ -78,7 +78,7 @@ We'll use this to gather the mean, standard deviation, and sample size.
 
 We'll use the sample statistics we pulled from the previous slide, the population value we are testing against in the null hypothesis, and the following formula to compute the t-statistic:
 
-$$t = \frac{\bar{X} - \mu}{\frac{\sigma}{\sqrt{N}}}$$
+$$t = \frac{\bar{X} - \mu}{\frac{\hat{\sigma}}{\sqrt{N}}}$$
 
 ## Step 1
 
@@ -117,17 +117,18 @@ Our resulting p-value from the `pt()` function is 0.0263. If we use a significan
 
 Thus, we conclude that the average ADD scores in this sample are significantly higher than what would be expected from a typical population (50).
 
-# One-sample t-test using the `t.test()` function
+# One-sample t-test using the `oneSampleTTest()` function
 
 ##
-We can also use the `t.test()` function to avoid doing computations by hand. This is a built-in function we can use to conduct a t-test.  
+We can also use the `oneSampleTTest()` function to avoid doing computations by hand. This is a function we can use to conduct a t-test from the `{lsr}` package.  
 
 Before using it, you can check the help page to learn more about the function. The help page gives you important information about the arguments you need to make the function work.  
 
 You can think of these as necessary components to an equation, much like what we did by hand previously:
 
 ```{r}
-?t.test
+require(lsr)
+?oneSampleTTest
 ```
 
 ##
@@ -135,35 +136,35 @@ To conduct a one-sample t-test we need the following arguments:
 
 - x: a numeric vector of values  
     - i.e., the column in your data for the variable of interest  
-- alternative: this argument can take one of three forms depending on the direction of your alternative hypothesis:  
-    - If your alternative hypothesis is non-directional you'll use `two.sided`  
-    - If your alternative hypothesis implies a certain direction you'll use either `greater` or `lesser` depending on the direction  
-- mu: the population value in your null hypothesis that you are testing against  
+- one.sided: this argument can take one of two forms depending on the direction of your alternative hypothesis:  
+    - If your alternative hypothesis is non-directional (i.e., two-sided) you'll use `FALSE`  
+    - If your alternative hypothesis implies a certain direction you'll use either `greater` or `less` depending on the direction  
+- mu: the value in your null hypothesis that you are testing against  
 
 ## Step 1
 We'll run the one-sample t-test using the same null and alternative hypothesis we specified for the first walkthrough.
 
 ```{r}
-t.test(x = Add$ADDSC,
-       alternative = "greater",
-       mu = 50)
+oneSampleTTest(x = Add$ADDSC,
+               mu = 50,
+               one.sided = "greater")
 ```
 
 ##
-The output for `t.test()` provides us with all the numbers we previously computed by hand.
+The output for `oneSampleTTest()` provides us with all the numbers we previously computed by hand.
 
-- t-statistic is reported as 1.9651  
+- t-statistic is reported as 1.965  
 - df is reported as 87  
-- p-value is reported as 0.02629  
+- p-value is reported as 0.026  
 
 Just like before, we use these values and our set alpha-value to reject the null hypothesis.
 
 ## Cohen's d
 
-You can use the values generated from `t.test()` to compute Cohen's d as an effect size estimate. Remember Cohen's d is calculated as:
+Luckily, `oneSampleTTest()` computes Cohen's d as an effect size estimate for you, which you can find in the output. Remember Cohen's d is calculated as:
 $$\frac{(\bar{X} - \mu)}{\hat{\sigma}}$$
 
-We'll do this by hand, first by creating objects with the necessary assigned values like before.
+You can also calculate Cohen's d by hand, first by creating objects with the necessary assigned values like before.
 
 ```{r}
 x_bar <- describe(Add$ADDSC)$mean
@@ -182,14 +183,9 @@ d
 
 You'll finally summarize your results using a paragraph. Here's an example:
 
-The average ADD score for 88 children in this particular sample was 52.60 with a standard
-deviation of 12.42. A one-sample t-test was conducted to test whether or not the average
-ADD score in this sample was significantly higher than 50, the mean ADD score for a
-normative population. Based on the results of a one-sample t-test, the sample mean was
-found to be significantly higher than the expected score from a typical population, t(87)
-=1.965, p = 0.0263, Cohen’s d = 0.21.
+The average ADD score for 88 children in this particular sample was 52.60 with a standard deviation of 12.42. A one-sample t-test was conducted to test whether or not the average ADD score in this sample was significantly higher than 50, the mean ADD score for a normative population. Based on the results of a one-sample t-test, the sample mean was found to be significantly higher than the expected score from a typical population, t(87)=1.965, p = 0.0263, Cohen’s d = 0.21.
 
-# Two-tailed t-test using `t.test()`
+# Two-tailed t-test using `oneSampleTTest()`
 
 ##
 Our conclusions would be very different if we constructed an alternative hypothesis as a two-tailed test.  
@@ -204,26 +200,24 @@ We can also write these using symbolic notation:
 $$H_0 : \mu = 50$$
 $$H_a : \mu \neq 50$$
 
-## Setting up `t.test()`
+## Setting up `oneSampleTTest()`
 Notice that the alternative hypothesis only indicates that the average is *different*, but does not imply a direction. Therefore, we now have a two-tailed test.  
 
-When we run our analysis, we'll specify the corresponding argument for `alternative`. That is, `alternative = "two.sided"`.
+When we run our analysis, we'll specify the corresponding argument for `one.sided`. That is, `one.sided = FALSE`.
 
 ```{r}
-t.test(x = Add$ADDSC,
-alternative = "two.sided",
-mu = 50)
+oneSampleTTest(x = Add$ADDSC,
+               mu = 50,
+               one.sided = FALSE)
 ```
 
 ## Analysis & Summary
 
-Notice our p-value is now 0.05259--double our previous p-value.
+Notice our p-value is now 0.053--double our previous p-value.
 
 Because it is not less than 0.05, we do not reject the null. The summary we write will look different as a result:
 
-The average ADD score for 88 children in this particular sample was 52.60 with a standard
-deviation of 12.42. A one-sample t-test was conducted to test whether or not the average
-ADD score in this sample was different than 50, the mean ADD score for a normative population. Based on the results of a one-sample t-test, there was not a significant difference, t(87) =1.965, p = 0.053, Cohen’s d = 0.21.
+The average ADD score for 88 children in this particular sample was 52.60 with a standard deviation of 12.42. A one-sample t-test was conducted to test whether or not the average ADD score in this sample was different than 50, the mean ADD score for a normative population. Based on the results of a one-sample t-test, there was not a significant difference, t(87) =1.965, p = 0.053, Cohen’s d = 0.21.
 
 ## Key Takeaway
 
@@ -237,7 +231,7 @@ It's important to decide your alternative hypothesis **a priori** before doing a
 
 ## Calculating by hand
 
-The `t.test()` function reports a 95% confidence interval in its calculation. To illustrate this, we will walk through how to calculate a 95% confidence interval by hand.
+The `oneSampleTTest()` function defaults to using a 95% confidence interval in its calculation, which it reports in the output for you. You can specify the confidence level you'd like with the `conf.level` argument. You can also calculate this by hand.  
 
 When you use `describe()`, it reports a column at the very end labeled `se`.
 
@@ -282,4 +276,4 @@ upper.bound <- x_bar + tc*se
 c(lower.bound, upper.bound)
 ```
 
-Our resulting 95% confidence interval is identical to the reported values using `t.test()`.
+Our resulting 95% confidence interval is identical to the reported values using `oneSampleTTest()`.

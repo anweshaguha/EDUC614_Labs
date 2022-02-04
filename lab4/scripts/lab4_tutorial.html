@@ -3198,7 +3198,7 @@ slide:not(.current) .plotly.html-widget{
 
 </article></slide><slide class=""><hgroup><h2>Intro</h2></hgroup><article  id="intro">
 
-<p>This week we will go over one sample t-tests using two different methods. Using a hypothetical dataset and research hypothesis, we will walk through how to conduct t-tests by hand and then by using the <code>t.test()</code> function.</p>
+<p>This week we will go over one sample t-tests using two different methods. Using a hypothetical dataset and research hypothesis, we will walk through how to conduct t-tests by hand and then by using the <code>oneSampleTTest()</code> function.</p>
 
 <p>Note: <strong>All material is taken from Dr. Zopluoglu’s 2021 EDUC 614 materials and adapted for this year’s course.</strong></p>
 
@@ -3267,7 +3267,7 @@ head(Add) #this pulls up the first 6 lines of the dataset</pre>
 
 <p>We’ll use the sample statistics we pulled from the previous slide, the population value we are testing against in the null hypothesis, and the following formula to compute the t-statistic:</p>
 
-<p>\[t = \frac{\bar{X} - \mu}{\frac{\sigma}{\sqrt{N}}}\]</p>
+<p>\[t = \frac{\bar{X} - \mu}{\frac{\hat{\sigma}}{\sqrt{N}}}\]</p>
 
 </article></slide><slide class=""><hgroup><h2>Step 1</h2></hgroup><article  id="step-1">
 
@@ -3305,17 +3305,21 @@ t</pre>
 
 <p>Thus, we conclude that the average ADD scores in this sample are significantly higher than what would be expected from a typical population (50).</p>
 
-</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>One-sample t-test using the <code>t.test()</code> function</h2></hgroup><article  id="one-sample-t-test-using-the-t.test-function">
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>One-sample t-test using the <code>oneSampleTTest()</code> function</h2></hgroup><article  id="one-sample-t-test-using-the-onesamplettest-function">
 
 </article></slide><slide class=""><hgroup><h2></h2></hgroup><article  id="section">
 
-<p>We can also use the <code>t.test()</code> function to avoid doing computations by hand. This is a built-in function we can use to conduct a t-test.</p>
+<p>We can also use the <code>oneSampleTTest()</code> function to avoid doing computations by hand. This is a function we can use to conduct a t-test from the <code>{lsr}</code> package.</p>
 
 <p>Before using it, you can check the help page to learn more about the function. The help page gives you important information about the arguments you need to make the function work.</p>
 
 <p>You can think of these as necessary components to an equation, much like what we did by hand previously:</p>
 
-<pre class = 'prettyprint lang-r'>?t.test</pre>
+<pre class = 'prettyprint lang-r'>require(lsr)</pre>
+
+<pre >## Loading required package: lsr</pre>
+
+<pre class = 'prettyprint lang-r'>?oneSampleTTest</pre>
 
 </article></slide><slide class=""><hgroup><h2></h2></hgroup><article  id="section-1">
 
@@ -3327,52 +3331,63 @@ t</pre>
 <ul>
 <li>i.e., the column in your data for the variable of interest<br/></li>
 </ul></li>
-<li>alternative: this argument can take one of three forms depending on the direction of your alternative hypothesis:
+<li>one.sided: this argument can take one of two forms depending on the direction of your alternative hypothesis:
 
 <ul>
-<li>If your alternative hypothesis is non-directional you’ll use <code>two.sided</code><br/></li>
-<li>If your alternative hypothesis implies a certain direction you’ll use either <code>greater</code> or <code>lesser</code> depending on the direction<br/></li>
+<li>If your alternative hypothesis is non-directional (i.e., two-sided) you’ll use <code>FALSE</code><br/></li>
+<li>If your alternative hypothesis implies a certain direction you’ll use either <code>greater</code> or <code>less</code> depending on the direction<br/></li>
 </ul></li>
-<li>mu: the population value in your null hypothesis that you are testing against</li>
+<li>mu: the value in your null hypothesis that you are testing against</li>
 </ul>
 
 </article></slide><slide class=""><hgroup><h2>Step 1</h2></hgroup><article  id="step-1-1">
 
 <p>We’ll run the one-sample t-test using the same null and alternative hypothesis we specified for the first walkthrough.</p>
 
-<pre class = 'prettyprint lang-r'>t.test(x = Add$ADDSC,
-       alternative = &quot;greater&quot;,
-       mu = 50)</pre>
+<pre class = 'prettyprint lang-r'>oneSampleTTest(x = Add$ADDSC,
+               mu = 50,
+               one.sided = &quot;greater&quot;)</pre>
 
 <pre >## 
-##  One Sample t-test
+##    One sample t-test 
 ## 
-## data:  Add$ADDSC
-## t = 1.9651, df = 87, p-value = 0.02629
-## alternative hypothesis: true mean is greater than 50
-## 95 percent confidence interval:
-##  50.40069      Inf
-## sample estimates:
-## mean of x 
-##  52.60227</pre>
+## Data variable:   Add$ADDSC 
+## 
+## Descriptive statistics: 
+##              ADDSC
+##    mean     52.602
+##    std dev. 12.422
+## 
+## Hypotheses: 
+##    null:        population mean less than or equal to 50 
+##    alternative: population mean greater than 50 
+## 
+## Test results: 
+##    t-statistic:  1.965 
+##    degrees of freedom:  87 
+##    p-value:  0.026 
+## 
+## Other information: 
+##    one-sided 95% confidence interval:  [50.401, Inf] 
+##    estimated effect size (Cohen&#39;s d):  0.209</pre>
 
 </article></slide><slide class=""><hgroup><h2></h2></hgroup><article  id="section-2">
 
-<p>The output for <code>t.test()</code> provides us with all the numbers we previously computed by hand.</p>
+<p>The output for <code>oneSampleTTest()</code> provides us with all the numbers we previously computed by hand.</p>
 
 <ul>
-<li>t-statistic is reported as 1.9651<br/></li>
+<li>t-statistic is reported as 1.965<br/></li>
 <li>df is reported as 87<br/></li>
-<li>p-value is reported as 0.02629</li>
+<li>p-value is reported as 0.026</li>
 </ul>
 
 <p>Just like before, we use these values and our set alpha-value to reject the null hypothesis.</p>
 
 </article></slide><slide class=""><hgroup><h2>Cohen’s d</h2></hgroup><article  id="cohens-d">
 
-<p>You can use the values generated from <code>t.test()</code> to compute Cohen’s d as an effect size estimate. Remember Cohen’s d is calculated as: \[\frac{(\bar{X} - \mu)}{\hat{\sigma}}\]</p>
+<p>Luckily, <code>oneSampleTTest()</code> computes Cohen’s d as an effect size estimate for you, which you can find in the output. Remember Cohen’s d is calculated as: \[\frac{(\bar{X} - \mu)}{\hat{\sigma}}\]</p>
 
-<p>We’ll do this by hand, first by creating objects with the necessary assigned values like before.</p>
+<p>You can also calculate Cohen’s d by hand, first by creating objects with the necessary assigned values like before.</p>
 
 <pre class = 'prettyprint lang-r'>x_bar &lt;- describe(Add$ADDSC)$mean
 sigma_hat &lt;- describe(Add$ADDSC)$sd
@@ -3389,9 +3404,9 @@ d</pre>
 
 <p>You’ll finally summarize your results using a paragraph. Here’s an example:</p>
 
-<p>The average ADD score for 88 children in this particular sample was 52.60 with a standard deviation of 12.42. A one-sample t-test was conducted to test whether or not the average ADD score in this sample was significantly higher than 50, the mean ADD score for a normative population. Based on the results of a one-sample t-test, the sample mean was found to be significantly higher than the expected score from a typical population, t(87) =1.965, p = 0.0263, Cohen’s d = 0.21.</p>
+<p>The average ADD score for 88 children in this particular sample was 52.60 with a standard deviation of 12.42. A one-sample t-test was conducted to test whether or not the average ADD score in this sample was significantly higher than 50, the mean ADD score for a normative population. Based on the results of a one-sample t-test, the sample mean was found to be significantly higher than the expected score from a typical population, t(87)=1.965, p = 0.0263, Cohen’s d = 0.21.</p>
 
-</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Two-tailed t-test using <code>t.test()</code></h2></hgroup><article  id="two-tailed-t-test-using-t.test">
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Two-tailed t-test using <code>oneSampleTTest()</code></h2></hgroup><article  id="two-tailed-t-test-using-onesamplettest">
 
 </article></slide><slide class=""><hgroup><h2></h2></hgroup><article  id="section-3">
 
@@ -3406,31 +3421,42 @@ d</pre>
 
 <p>We can also write these using symbolic notation: \[H_0 : \mu = 50\] \[H_a : \mu \neq 50\]</p>
 
-</article></slide><slide class=""><hgroup><h2>Setting up <code>t.test()</code></h2></hgroup><article  id="setting-up-t.test">
+</article></slide><slide class=""><hgroup><h2>Setting up <code>oneSampleTTest()</code></h2></hgroup><article  id="setting-up-onesamplettest">
 
 <p>Notice that the alternative hypothesis only indicates that the average is <em>different</em>, but does not imply a direction. Therefore, we now have a two-tailed test.</p>
 
-<p>When we run our analysis, we’ll specify the corresponding argument for <code>alternative</code>. That is, <code>alternative = &quot;two.sided&quot;</code>.</p>
+<p>When we run our analysis, we’ll specify the corresponding argument for <code>one.sided</code>. That is, <code>one.sided = FALSE</code>.</p>
 
-<pre class = 'prettyprint lang-r'>t.test(x = Add$ADDSC,
-alternative = &quot;two.sided&quot;,
-mu = 50)</pre>
+<pre class = 'prettyprint lang-r'>oneSampleTTest(x = Add$ADDSC,
+               mu = 50,
+               one.sided = FALSE)</pre>
 
 <pre >## 
-##  One Sample t-test
+##    One sample t-test 
 ## 
-## data:  Add$ADDSC
-## t = 1.9651, df = 87, p-value = 0.05259
-## alternative hypothesis: true mean is not equal to 50
-## 95 percent confidence interval:
-##  49.97026 55.23429
-## sample estimates:
-## mean of x 
-##  52.60227</pre>
+## Data variable:   Add$ADDSC 
+## 
+## Descriptive statistics: 
+##              ADDSC
+##    mean     52.602
+##    std dev. 12.422
+## 
+## Hypotheses: 
+##    null:        population mean equals 50 
+##    alternative: population mean not equal to 50 
+## 
+## Test results: 
+##    t-statistic:  1.965 
+##    degrees of freedom:  87 
+##    p-value:  0.053 
+## 
+## Other information: 
+##    two-sided 95% confidence interval:  [49.97, 55.234] 
+##    estimated effect size (Cohen&#39;s d):  0.209</pre>
 
 </article></slide><slide class=""><hgroup><h2>Analysis &amp; Summary</h2></hgroup><article  id="analysis-summary">
 
-<p>Notice our p-value is now 0.05259–double our previous p-value.</p>
+<p>Notice our p-value is now 0.053–double our previous p-value.</p>
 
 <p>Because it is not less than 0.05, we do not reject the null. The summary we write will look different as a result:</p>
 
@@ -3448,7 +3474,7 @@ mu = 50)</pre>
 
 </article></slide><slide class=""><hgroup><h2>Calculating by hand</h2></hgroup><article  id="calculating-by-hand">
 
-<p>The <code>t.test()</code> function reports a 95% confidence interval in its calculation. To illustrate this, we will walk through how to calculate a 95% confidence interval by hand.</p>
+<p>The <code>oneSampleTTest()</code> function defaults to using a 95% confidence interval in its calculation, which it reports in the output for you. You can specify the confidence level you’d like with the <code>conf.level</code> argument. You can also calculate this by hand.</p>
 
 <p>When you use <code>describe()</code>, it reports a column at the very end labeled <code>se</code>.</p>
 
@@ -3491,7 +3517,7 @@ c(lower.bound, upper.bound)</pre>
 
 <pre >## [1] 49.97026 55.23429</pre>
 
-<p>Our resulting 95% confidence interval is identical to the reported values using <code>t.test()</code>.</p></article></slide>
+<p>Our resulting 95% confidence interval is identical to the reported values using <code>oneSampleTTest()</code>.</p></article></slide>
 
 
   <slide class="backdrop"></slide>
