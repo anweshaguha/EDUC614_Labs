@@ -9,6 +9,8 @@ output:
   html_document:
     df_print: paged
   beamer_presentation: default
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -17,4 +19,267 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # One Sample t-test
 
-## 
+## Intro
+This week we will go over one sample t-tests using two different methods. Using a hypothetical dataset and research hypothesis, we will walk through how to conduct t-tests by hand and then by using the `t.test()` function.
+
+Note: **All material is taken from Dr. Zopluoglu's 2021 EDUC 614 materials and adapted for this year's course.**
+
+We have adapted it to slide format using R.  
+
+*Want to learn how we created R slide presentations?* [This tutorial](https://www.r-bloggers.com/2019/09/mastering-r-presentations/) *is helpful.*
+
+## Importing Data
+
+Our first step is to import the data we need. We'll use the `Add` dataset for this walkthrough, which you can access via Canvas. We'll also use the `head()` function to familiarize ourselves with the structure of the data.  
+
+```{r}
+Add <- read.csv(file   = "/Users/janetteavelar/Desktop/Add.csv",
+                header = TRUE)
+
+head(Add) #this pulls up the first 6 lines of the dataset
+```
+
+## Research Hypothesis
+We'll be working with the column `ADDSC` which gives us a score for Attention Deficit Disorder (ADD) for each observation. Higher scores indicate more severity.  
+
+Suppose we know that the average ADD score in a typical population is 50.  
+
+**Research Hypothesis:** With this information, we hypothesize that the subjects in this sample (N=88) have higher ADD scores than what we would expect to see in a typical population.  
+
+We thus develop our null and alternative hypotheses in order to test our research hypothesis.
+
+## Null and Alternative Hypothesis
+
+Remember that we can write our null and alternative hypothesis verbally or using symbolic notation. In other words, we can write them as:
+
+* **Null hypothesis:** There is no difference in ADD scores between the subjects in this particular sample and a typical population.  
+* **Alternative hypothesis:** The subjects in this particular sample has higher ADD scores than what we would expect to see in a typical population.  
+
+Or as:
+$$H_0 : \mu = 50$$
+$$H_a : \mu > 50$$
+
+*Note that we will be conducting a one-tailed t-test because the alternative hypothesis implies a specific direction for the difference.*
+
+# One-sample t-test by hand
+
+## Descriptive statistics
+
+We'll begin by computing the descriptive statistics for the `ADDSC` variable:
+
+```{r}
+require(psych)
+describe(Add$ADDSC)
+```
+
+We'll use this to gather the mean, standard deviation, and sample size.
+
+## t-statistic formula
+
+We'll use the sample statistics we pulled from the previous slide, the population value we are testing against in the null hypothesis, and the following formula to compute the t-statistic:
+
+$$t = \frac{\bar{X} - \mu}{\frac{\sigma}{\sqrt{N}}}$$
+
+## Step 1
+
+Our first step is to create values for the different components of the formula we'll need.
+
+```{r}
+x_bar <- describe(Add$ADDSC)$mean
+sigma_hat <- describe(Add$ADDSC)$sd
+N <- describe(Add$ADDSC)$n
+mu <- 50
+```
+
+Let's put this all together into a formula:
+
+```{r}
+t <- (x_bar-mu)/(sigma_hat/sqrt(N))
+t
+```
+
+## Step 2
+
+Now we can use our final value `t` to compute the probability of observing a t-statistic of 1.965 or above when the degrees of freedom is 87 (N-1 = 87). 
+
+We'll compute this using the `pt()` function.  
+
+When running the function, we'll set the `lower.tail` argument to `FALSE` because we're calculating the upper tail probability. $P(t > 1.965148)$
+
+```{r}
+pt(q = 1.965148, df = 87, lower.tail = FALSE)
+#the value we set to q is our "t" calculated in the previous slide.
+```
+
+## Step 3
+
+Our resulting p-value from the `pt()` function is 0.0263. If we use a significance level of 0.05, we reject the null hypothesis: $$p = 0.0263 < .05$$
+
+Thus, we conclude that the average ADD scores in this sample are significantly higher than what would be expected from a typical population (50).
+
+# One-sample t-test using the `t.test()` function
+
+##
+We can also use the `t.test()` function to avoid doing computations by hand. This is a built-in function we can use to conduct a t-test.  
+
+Before using it, you can check the help page to learn more about the function. The help page gives you important information about the arguments you need to make the function work.  
+
+You can think of these as necessary components to an equation, much like what we did by hand previously:
+
+```{r}
+?t.test
+```
+
+##
+To conduct a one-sample t-test we need the following arguments:  
+
+- x: a numeric vector of values  
+    - i.e., the column in your data for the variable of interest  
+- alternative: this argument can take one of three forms depending on the direction of your alternative hypothesis:  
+    - If your alternative hypothesis is non-directional you'll use `two.sided`  
+    - If your alternative hypothesis implies a certain direction you'll use either `greater` or `lesser` depending on the direction  
+- mu: the population value in your null hypothesis that you are testing against  
+
+## Step 1
+We'll run the one-sample t-test using the same null and alternative hypothesis we specified for the first walkthrough.
+
+```{r}
+t.test(x = Add$ADDSC,
+       alternative = "greater",
+       mu = 50)
+```
+
+##
+The output for `t.test()` provides us with all the numbers we previously computed by hand.
+
+- t-statistic is reported as 1.9651  
+- df is reported as 87  
+- p-value is reported as 0.02629  
+
+Just like before, we use these values and our set alpha-value to reject the null hypothesis.
+
+## Cohen's d
+
+You can use the values generated from `t.test()` to compute Cohen's d as an effect size estimate. Remember Cohen's d is calculated as:
+$$\frac{(\bar{X} - \mu)}{\hat{\sigma}}$$
+
+We'll do this by hand, first by creating objects with the necessary assigned values like before.
+
+```{r}
+x_bar <- describe(Add$ADDSC)$mean
+sigma_hat <- describe(Add$ADDSC)$sd
+mu <- 50
+```
+
+Then plugging our values into the formula:
+
+```{r}
+d <- (x_bar - mu)/sigma_hat
+d
+```
+
+## Summarizing Results
+
+You'll finally summarize your results using a paragraph. Here's an example:
+
+The average ADD score for 88 children in this particular sample was 52.60 with a standard
+deviation of 12.42. A one-sample t-test was conducted to test whether or not the average
+ADD score in this sample was significantly higher than 50, the mean ADD score for a
+normative population. Based on the results of a one-sample t-test, the sample mean was
+found to be significantly higher than the expected score from a typical population, t(87)
+=1.965, p = 0.0263, Cohen’s d = 0.21.
+
+# Two-tailed t-test using `t.test()`
+
+##
+Our conclusions would be very different if we constructed an alternative hypothesis as a two-tailed test.  
+
+Suppose that we constructed the alternative hypothesis as the following instead:  
+
+* **Null hypothesis:** There is no difference in ADD scores between the subjects in this particular sample and a typical population.
+
+* **Alternative hypothesis:** The subjects in this particular sample have different ADD scores than what we would expect in a typical population.
+
+We can also write these using symbolic notation:
+$$H_0 : \mu = 50$$
+$$H_a : \mu \neq 50$$
+
+## Setting up `t.test()`
+Notice that the alternative hypothesis only indicates that the average is *different*, but does not imply a direction. Therefore, we now have a two-tailed test.  
+
+When we run our analysis, we'll specify the corresponding argument for `alternative`. That is, `alternative = "two.sided"`.
+
+```{r}
+t.test(x = Add$ADDSC,
+alternative = "two.sided",
+mu = 50)
+```
+
+## Analysis & Summary
+
+Notice our p-value is now 0.05259--double our previous p-value.
+
+Because it is not less than 0.05, we do not reject the null. The summary we write will look different as a result:
+
+The average ADD score for 88 children in this particular sample was 52.60 with a standard
+deviation of 12.42. A one-sample t-test was conducted to test whether or not the average
+ADD score in this sample was different than 50, the mean ADD score for a normative population. Based on the results of a one-sample t-test, there was not a significant difference, t(87) =1.965, p = 0.053, Cohen’s d = 0.21.
+
+## Key Takeaway
+
+Whether you choose a one-tail test or a two-tail test may sometimes make a difference.  
+
+It's important to decide your alternative hypothesis **a priori** before doing any calculations and stick with what you chose.  
+
+***No gaming or fishing or adjusting things post-hoc after you see the numbers.***
+
+# Confidence Intervals
+
+## Calculating by hand
+
+The `t.test()` function reports a 95% confidence interval in its calculation. To illustrate this, we will walk through how to calculate a 95% confidence interval by hand.
+
+When you use `describe()`, it reports a column at the very end labeled `se`.
+
+```{r}
+describe(Add$ADDSC)
+```
+
+##
+`se` stands for **standard error of the mean**. This is what we have referred to as the standard deviation of the sampling distribution of the mean. 
+$$\frac{\hat{\sigma}}{\sqrt{N}} = \frac{12.422}{\sqrt{88}} = 1.324$$
+This is the denominator we used when computing the t-statistic earlier.
+
+##
+You can use the **standard error of the mean** to construct a confidence interval around the mean. For instance, if you would like to compute the 95% confidence interval for the mean, you would do the following:
+$$Lower Bound = X - t_c*Standard Error$$
+$$Upper Bound = X + t_c*Standard Error$$
+
+where $t_c$ is the critical value for the t-distribution with degrees of freedom = 87 such that the area under the curve = 95%.
+
+##
+We'll use the `qt()` function to get critical values in order to compute the 95% confidence interval.  
+
+First we'll assign values for our standard error and X.
+
+```{r}
+se <- describe(Add$ADDSC)$se
+x_bar <- describe(Add$ADDSC)$mean
+```
+
+We'll then use `qt()` to generate a value for $t_c$:
+
+```{r}
+tc <- qt(p = 0.975, df = 87, lower.tail = TRUE)
+```
+
+##
+And finally, we'll plug all of those values into our two formulas:
+```{r}
+lower.bound <- x_bar - tc*se
+upper.bound <- x_bar + tc*se
+
+c(lower.bound, upper.bound)
+```
+
+Our resulting 95% confidence interval is identical to the reported values using `t.test()`.
