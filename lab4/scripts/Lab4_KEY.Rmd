@@ -1,0 +1,48 @@
+---
+title: "Lab 4 Key"
+author: "Janette Avelar & Anwesha Guha"
+date: "2/4/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(rio)
+library(here)
+library(dplyr)
+library(psych)
+```
+
+Part III - HEIGHT
+```{r}
+ecls <- import(here("data", "ecls-k-sub.csv"))
+ecls$X1HEIGHT[ecls$X1HEIGHT<0] <- NA
+```
+
+```{r}
+t.test(x = ecls$X1HEIGHT,
+       alternative = "two.sided",
+       mu = 44)
+
+x_bar <- describe(ecls$X1HEIGHT)$mean
+sigma_hat <- describe(ecls$X1HEIGHT)$sd
+
+(x_bar - 44)/sigma_hat
+```
+
+Part IV - WEIGHT
+```{r}
+ecls <- import(here("data", "ecls-k-sub.csv"))
+ecls$X1WEIGHT[ecls$X1WEIGHT<0] <- NA
+
+t.test(x = ecls$X1WEIGHT,
+       alternative = "two.sided",
+       mu = 47)
+
+x_bar <- describe(ecls$X1WEIGHT)$mean
+sigma_hat <- describe(ecls$X1WEIGHT)$sd
+
+(x_bar - 47)/sigma_hat
+```
+
