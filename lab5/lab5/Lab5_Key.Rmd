@@ -1,0 +1,165 @@
+---
+title: "Lab 5 Key"
+author: "Anwesha Guha & Janette Avelar"
+date: "2/11/2022"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+First, I imported all relevant libraries are imported. Your process may look different.
+```{r}
+library(rio)
+library(here)
+library(lsr)
+library(psych)
+```
+
+### Part 1. Understanding the data structure for an independent samples t-test
+
+The time variable contains all the times of death, for both control and experiment groups. The first 11 numbers belong to the control group, while the last 8 numbers belong to the experimental group. To specify which time of death is in which group, we need to create a second variable that labels each time as either “control” or "experiment." 
+```{r}
+time <- c(70, 77, 83, 87, 92, 93, 100, 102, 102, 103, 96,
+            34, 36, 48, 48, 65, 91, 98, 102)
+category <- c(rep("control", 11),
+              rep("experiment", 8))
+```
+
+We then join both “time” and “category” to create a data frame with two columns.
+
+```{r}
+death_df <- data.frame(time, category)
+```
+
+In R, we have to do an additional step of turning the category variable into a factor, so we can use it for analysis.
+```{r}
+death_df$category <- as.factor(death_df$category)
+```
+
+**QUESTION 1: Now you're ready to run an independent samples t-test. Copy/paste the R output below.**
+
+Assuming equal variances:
+```{r}
+independentSamplesTTest(formula   = time ~ category, 
+                        data      = death_df,                         
+                        var.equal = TRUE,
+                        one.sided = "control")
+```
+Not assuming equal variances:
+```{r}
+independentSamplesTTest(formula   = time ~ category, 
+                        data      = death_df,                         
+                        var.equal = FALSE,
+                        one.sided = "control")
+```
+
+### Part 2. Understanding the data structure for a dependent samples t-test
+
+We’ll again create a dataset in R by using the following code. 
+```{r}
+silent <- c(6, 7, 7, 5, 4, 4, 6, 9, 5, 7)
+noisy <-  c(9, 9, 6, 7, 6, 7, 9, 11, 7, 9)
+mistakes_df <- data.frame(silent, noisy)
+```
+
+**QUESTION 2: Using the oneSampleTTest function, run a dependent samples t-test and paste a screenshot of your output below.**
+
+This time, we compute the difference scores in a separate column.
+```{r}
+mistakes_df$difference <- mistakes_df$silent - mistakes_df$noisy
+```
+
+Conduct one-sample t-test of differnces.
+```{r}
+oneSampleTTest(x = mistakes_df$difference,
+               mu = 0,
+               one.sided = "less")
+```
+Alternatively, if you calculated `mistakes_df$difference` as noisy minus silent (`mistakes_df$noisy - mistakes_df$silent`), you would do `one.sided = "greater"` in your oneSampleTTest.
+
+### Part 3. Conducting an independent samples t-test and writing up results
+
+**a) State the null and alternative hypotheses in symbols.**
+
+$$H_o: \mu_1 = \mu_2$$
+$$H_o: \mu_1 \neq \mu_2$$
+*where* $\mu_1 =$ *average reading score for students who are first-time kindergartners, and * $\mu_2=$ *average reading score for students who are not first-time kindergarteners*
+
+**b) Run an independent samples t-test (two-sided) to compare the average reading score for those kids who are first-time kindergartners and those who are not. Copy/Paste the software output below.**
+
+Import data, whichever way is most comfortable to you.
+```{r}
+ecls <- import(here("data", "ecls-k-sub.csv"))
+```
+
+Next, remember to filter data, removing values that don't make sense, like -9. Also, remember to convert the variable to a factor for easier interpretability.
+```{r}
+ecls$X1FIRKDG[ecls$X1FIRKDG==-9] <- NA
+ecls$X1RSCALK5[ecls$X1RSCALK5==-9] <- NA
+ecls$X1FIRKDG <- as.factor(ecls$X1FIRKDG)
+```
+
+Check out data descriptives.
+```{r}
+describeBy(ecls$X1RSCALK5, group = ecls$X1FIRKDG)
+```
+
+
+Then, conduct t-test. We are doing a two sided test since we are checking mean differences.
+```{r}
+independentSamplesTTest(formula   = X1RSCALK5 ~ X1FIRKDG, 
+                        data      = ecls,                         
+                        var.equal = FALSE,
+                        one.sided = FALSE)
+```
+
+**c) Provide a summary write-up for your results from this analysis.** 
+
+The average reading score is 54.1 with a standard deviation of 11.54 for 1460 who are first-time kindergarteners and 54.53 with a standard deviation of 10.93 for the 75 who are not.
+An independent samples t-test was conducted to test whether or not the average reading score for first-time and not-first-time kindergarteners significantly differed. The findings indicate that the difference in average scores between two groups was not significantly significant (95% confidence interval [-3.01, 2.15]), t(83) = -0.33, p = 0.75, Cohen’s d = 0.04).
+
+### Part 4. Conducting a dependent samples t-test and writing up results
+
+
+**a) State the null and alternative hypotheses in symbols.**
+
+$$H_o: \mu_1 = \mu_2$$
+
+$$H_o: \mu_1 < \mu_2$$
+
+*where* $\mu_1 =$ *average focus score for students in the fall, and* $\mu_2=$ *average focus score for students in the spring*
+
+**b) Run a dependent samples t-test to compare the average rating for attentional focus in the fall of kindergarten and the average rating for attentional focus in the spring of kindergarten. Copy/Paste the software output below.**
+
+First, remember to clean your data.
+```{r}
+ecls$X1ATTNFS[ecls$X1ATTNFS==-9] <- NA
+ecls$X1ATTNFS[ecls$X1ATTNFS==-1] <- NA
+ecls$X2ATTNFS[ecls$X2ATTNFS==-9] <- NA
+ecls$X2ATTNFS[ecls$X2ATTNFS==-1] <- NA
+```
+
+Check out descriptives.
+```{r}
+describe(ecls$X1ATTNFS)
+describe(ecls$X2ATTNFS)
+```
+
+Create a third variable calculating the difference in scores.
+```{r}
+ecls$growth <- ecls$X2ATTNFS - ecls$X1ATTNFS
+```
+
+We are testing whether attention grew, so we want to test whether growth is greater than zero.
+```{r}
+oneSampleTTest(x = ecls$growth,
+               mu = 0,
+               one.sided = "greater")
+```
+
+**c) Provide a summary write-up for your results from this analysis. **
+
+The average rating for attentional focus in the fall of kindergarten was 4.70 with a  standard deviation of 1.33, and the average for the spring was 4.93 with a standard deviation of 1.32. 
+A dependent samples t-test was conducted to test whether or not the average focus score increase over the school year was significant. The findings indicated that the increase of 0.223 was statistically significant, t(1357) = -7.79, p < 0.001, Cohen’s d = 0.211.

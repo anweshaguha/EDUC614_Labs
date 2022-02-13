@@ -1,0 +1,248 @@
+---
+title: "Lab 5 Tutorial"
+author: "Janette Avelar & Anwesha Guha"
+date: "1/25/2022"
+output:
+  beamer_presentation: default
+  html_document:
+    df_print: paged
+  ioslides_presentation:
+    widescreen: yes
+    smaller: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Dependent and Independent Samples t-test
+
+## Intro
+This week we will extend our exploration of t-tests by conducting dependent and independent samples t-tests. Using a hypothetical dataset and research hypothesis, we will walk through how to conduct t-tests by using the `oneSampleTTest()` function.
+
+Note: **All material is taken from Dr. Zopluoglu's 2021 EDUC 614 materials and adapted for this year's course.**
+
+We have adapted it to slide format using R.  
+
+*Want to learn how we created R slide presentations?* [This linked tutorial](https://www.r-bloggers.com/2019/09/mastering-r-presentations/) *is helpful.*
+
+# Independent samples t-test
+
+## Importing Data
+
+Our first step is to import the data we need. We'll use the `Add` dataset for this walkthrough, which you can access via Canvas. We'll also use the `head()` function to familiarize ourselves with the structure of the data.  
+
+```{r}
+Add <- read.csv(file   = "/Users/aguha/Downloads/Add.csv",
+                header = TRUE)
+
+head(Add, 3) #this pulls up the first 3 lines of data
+```
+
+## Research Hypothesis
+The column `ADDSC` is a score for each observation related to the level of Attention Deficit Disorder (ADD).
+Higher scores indicate more severity. The column `Repeat` is a binary variable with 0 indicating that a student did not repeat a grade and 1 indicating that a student did repeat a grade.
+
+**Research Hypothesis:** Students who do not repeat a grade have lower scores of ADD than the students who repeat a grade. 
+
+Using a verbal language, we can also write the null hypothesis and alternative hypothesis...
+
+
+## Null and Alternative Hypothesis
+
+* **Null hypothesis:** The average ADD scores for the students who repeat a grade are equal to the average ADD scores for the students who does not repeat a grade. 
+* **Alternative hypothesis:** The average ADD scores for the students who do not repeat a grade are lower than the ADD scores for the students who repeat a grade. 
+
+You can write same null and alternative hypothesis by using symbolic notation. Suppose that $\mu_2$ is the population mean for students who repeated a grade, and $\mu_1$ is the population mean for students who did not repeat a grade.
+$$H_0 : \mu_1 = \mu_2$$
+$$H_a : \mu_1 < \mu_2$$
+
+*Note that we will be conducting a one-tailed t-test because the alternative hypothesis implies a specific direction for the difference.*
+
+## One-Sided Independent samples t-test using the `independentSamplesTTest()` function
+
+Also from the `{lsr}` package, we can use the `independentSamplesTTest()` function to conduct an independent samples t-test using the following arguments:
+
+- formula: outcome variable(left) ~  independent variable(right)
+    - you are looking at the outcome variable for different levels of the independent variable
+    - variable names must match those in your dataset
+- data: name of your dataset
+- one.sided: specify the name of the group that you're expecting to have the higher score
+- var.equal: whether or not you are making the assumption that both populations have the same variance
+    - if you can reasonably assume that this assumption holds, set to `TRUE`
+    - otherwise set to `FALSE` to conduct Welch's test
+
+## Data Checks
+Let’s run the independent samples t-test for the same null and alternative hypothesis specified earlier. But, first we will do some checks on the variables of interest in this dataset.
+
+
+```{r}
+# First, make sure to convert your independent variable
+# to a factor variable if it isn't already.
+typeof(Add$Repeat)
+Add$Repeat <- as.factor(Add$Repeat)
+```
+##
+
+```{r}
+# Second, make sure your independent variable has 
+## only two distinct values
+table(Add$Repeat)
+```
+
+```{r}
+# Third, make sure your dependent variable is numeric
+typeof(Add$ADDSC)
+```
+
+## Descriptives
+It is also a good idea to check the descriptive statistics for the variable to make sure the numbers look as expected.
+
+```{r message=FALSE}
+require(psych)
+# Overall descriptives for the dependent variable
+describe(Add$ADDSC)
+```
+
+##
+
+```{r}
+# Conditional descriptive statistics by Repeat
+describeBy(Add$ADDSC,Add$Repeat)
+```
+
+## Conducting the t-test assuming variances are equal
+
+Now, we can run the t-test.
+```{r eval=FALSE, message=FALSE, echo=TRUE}
+require(lsr)
+independentSamplesTTest(formula   = ADDSC ~ Repeat, 
+                        data      = Add,                         
+                        var.equal = TRUE,
+                        one.sided = 0)
+```
+
+##
+```{r echo=FALSE}
+library(lsr)
+independentSamplesTTest(formula   = ADDSC ~ Repeat, 
+                        data      = Add,                         
+                        var.equal = TRUE,
+                        one.sided = 0)
+```
+
+##
+As you see, this function returns an output that includes all the relevant numbers.
+
+- t-statistic is reported as -4.098
+- df is reported as 86
+- p-value is reported as <.001 
+- sample means for each group, 50.62 and 65.17
+- Cohen's d is 1.273 
+- CI is [-21.605, -7.491]
+
+## Summarizing Results
+
+Finally, you can summarize the results using a paragraphs as the following:
+
+The average ADD scores was 50.62 with a standard deviation of 11.59 for 76 students who did not repeat a grade and was 65.17 with a standard deviation of 10.26 for 12 students who repeated a grade. An independent samples t-test was conducted to test whether or not the average ADD score for students who did not repeat a grade was significantly lower than the students who repeated a grade. The findings indicates that the average ADD score for students who did not repeat a grade was 14.55 points lower, and the difference was statistically significant, t(86)= -4.098, p < 0.001, Cohen’s d = 1.27.
+
+## Conducting the t-test assuming variances are NOT equal
+
+If you think the equal variance assumption is not plausible, then you can also run the t-test with Welch approximation by specifying `var.equal = FALSE`.
+```{r eval=FALSE, message=FALSE, echo=TRUE}
+independentSamplesTTest(formula   = ADDSC ~ Repeat, 
+                        data      = Add,                         
+                        var.equal = FALSE,
+                        one.sided = 0)
+```
+##
+```{r echo=FALSE}
+independentSamplesTTest(formula   = ADDSC ~ Repeat, 
+                        data      = Add,                         
+                        var.equal = FALSE,
+                        one.sided = 0)
+```
+
+## Summarizing Results
+
+If you do run the t-test with Welch approximation, you can report the numbers accordingly. Notice that everything in the following write up is same except the numbers related to the t-statistic.
+
+The average ADD scores was 50.62 with a standard deviation of 11.59 for 76 students who did not repeat a grade and was 65.17 with a standard deviation of 10.26 for 12 students who repeated a grade. An independent samples t-test was conducted to test whether or not the average ADD score for students who did not repeat a grade was significantly lower than the students who repeated a grade. The findings indicates that the average ADD score for students who did not repeat a grade was 14.55 points lower, and the difference was statistically significant, t(15.79)= -4.482, p < 0.001, Cohen’s d = 1.33.
+
+# Dependent Samples t-test
+
+## Import the data
+```{r}
+anorexia <- read.csv(file   = "/Users/aguha/Downloads/anorexia.csv",
+            header = TRUE)
+
+str(anorexia) #this shows an overview of the data
+```
+- 17 patients diagnosed with anorexia participated in a study.
+- The weight was measured before the family therapy (Weight_before)
+- Following a 4 weeks of therapy, the weight was measured again for the same 17 subjects(Weight_after)
+
+Note the data structure: Each individual is represented in a separate row. Dependent measures for the same individual are in columns.
+
+## Research Hypothesis
+
+**Research Hypothesis:** Participants in the study will gain weight after being exposed to the 4-week family therapy.
+
+* **Null hypothesis:** The average weight for patients before the therapy is equal to the average weight after the therapy. 
+* **Alternative hypothesis:** The average weight for patients before the therapy is smaller than the average weight after the therapy.
+
+You can write same null and alternative hypothesis by using symbolic notation. Suppose that $\mu_1$ is the population mean weight for patients before exposed to the therapy, and $\mu_2$ is the population mean weight for patients after being exposed to the therapy.
+$$H_0 : \mu_1 = \mu_2$$
+$$H_a : \mu_1 < \mu_2$$
+
+*Note that we will be conducting a one-tailed t-test because the alternative hypothesis implies a specific direction for the difference.*
+
+## Describe Data
+```{r}
+describe(anorexia$Weight_before)
+describe(anorexia$Weight_after)
+```
+
+
+## Dependent samples t-test using the `oneSampleTTest()` function
+
+Because of the data structure of dependent samples data (the same person is being used at two time points, for example), we can create another variable in the data set that computes the differences at each data point.
+```{r}
+anorexia$Weight_difference <- 
+  anorexia$Weight_after - anorexia$Weight_before
+```
+
+Using this new variable, we can conduct the `oneSampleTTest()` like before.
+
+##
+To conduct a one-sample t-test we need the following arguments, adopted for dependent samples:  
+
+- x: the column in your data for the variable you just created (difference variable) 
+- one.sided: this argument can take one of two forms depending on the direction of your alternative hypothesis:  
+    - If your alternative hypothesis is non-directional (i.e., two-sided) you'll use `FALSE`  
+    - If your alternative hypothesis implies a certain direction you'll use either `greater` or `less` depending on the direction  
+- mu: the value in your null hypothesis that you are testing against
+    - will usually be 0 since you are seeing whether the groups are different
+
+## Dependent samples t-test
+```{r echo=TRUE, eval=FALSE}
+oneSampleTTest(x = anorexia$Weight_difference,
+               mu = 0,
+               one.sided = "greater") #since you are seeing if there has been a weight gain
+```
+##
+```{r echo=FALSE, eval=TRUE}
+oneSampleTTest(x = anorexia$Weight_difference,
+               mu = 0,
+               one.sided = "greater") #since you are seeing if there has been a weight gain
+```
+
+## Summarizing Results
+
+Summarize the results using a paragraphs as the following:
+
+The average weight for 17 patients diagnoses with anorexia was 83.23 with a standard deviation of 5.02 before the family therapy, and the average weight increased to 90.49 with a standard deviation of 8.48 after four weeks of therapy. A dependent samples t-test was conducted to test whether or not the average weight gain after the family therapy was significant. The findings indicated that the patients increased their weight by 7.26 lbs,and the increase was statistically significant, t(16)= 4.185, p < .001, Cohen’s d = 1.01.
+
