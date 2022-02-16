@@ -1,0 +1,29 @@
+---
+title: "Lab 6 Tutorial"
+author: "Janette Avelar & Anwesha Guha"
+date: "1/25/2022"
+output:
+  ioslides_presentation:
+    widescreen: yes
+    smaller: no
+  html_document:
+    df_print: paged
+  beamer_presentation: default
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# One-Way ANOVA
+
+## Intro
+This week we will go over one-way analysis of variance.
+
+Note: **All material is taken from Dr. Zopluoglu's 2021 EDUC 614 materials and adapted for this year's course.**
+
+We have adapted it to slide format using R.  
+
+*Want to learn how we created R slide presentations?* [This tutorial](https://www.r-bloggers.com/2019/09/mastering-r-presentations/) *is helpful.*

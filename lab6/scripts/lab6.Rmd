@@ -1,0 +1,36 @@
+---
+title: "Lab 6"
+author: "Janette Avelar & Anwesha Guha"
+date: "2/15/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r Load library}
+library(tidyverse)
+library(psych)
+```
+
+```{r create dataset}
+time <- c(70, 77, 83, 87, 92, 93, 100, 102, 102, 103, 96,
+          49, 60, 63, 67, 70, 74, 77, 80, 89,
+          30, 37, 56, 65, 76, 83, 87, 90, 94, 97,
+          34, 36, 48, 48, 65, 91, 98, 102)
+# row 1 = control
+# row 2 = low dosage
+# row 3 = medium dosage
+# row 4 = high dosage
+
+category <- c(rep("control", 11),
+              rep("low_dose", 9),
+              rep("med_dose", 10),
+              rep("high_dose", 8))
+
+death_df <- data.frame(time, category)
+
+
+```
+
