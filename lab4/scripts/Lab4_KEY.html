@@ -174,48 +174,64 @@ pre code {
 <p>Part III - HEIGHT</p>
 <pre class="r"><code>ecls &lt;- import(here(&quot;data&quot;, &quot;ecls-k-sub.csv&quot;))
 ecls$X1HEIGHT[ecls$X1HEIGHT&lt;0] &lt;- NA</code></pre>
-<pre class="r"><code>t.test(x = ecls$X1HEIGHT,
-       alternative = &quot;two.sided&quot;,
-       mu = 44)</code></pre>
+<pre class="r"><code>oneSampleTTest(x = ecls$X1HEIGHT,
+               mu = 44,
+               one.sided = FALSE)</code></pre>
+<pre><code>## Warning in oneSampleTTest(x = ecls$X1HEIGHT, mu = 44, one.sided = FALSE): 240
+## case(s) removed due to missingness</code></pre>
 <pre><code>## 
-##  One Sample t-test
+##    One sample t-test 
 ## 
-## data:  ecls$X1HEIGHT
-## t = 15.14, df = 1578, p-value &lt; 2.2e-16
-## alternative hypothesis: true mean is not equal to 44
-## 95 percent confidence interval:
-##  44.70517 44.91508
-## sample estimates:
-## mean of x 
-##  44.81012</code></pre>
-<pre class="r"><code>x_bar &lt;- describe(ecls$X1HEIGHT)$mean
-sigma_hat &lt;- describe(ecls$X1HEIGHT)$sd
-
-(x_bar - 44)/sigma_hat</code></pre>
-<pre><code>## [1] 0.3810123</code></pre>
+## Data variable:   ecls$X1HEIGHT 
+## 
+## Descriptive statistics: 
+##             X1HEIGHT
+##    mean       44.810
+##    std dev.    2.126
+## 
+## Hypotheses: 
+##    null:        population mean equals 44 
+##    alternative: population mean not equal to 44 
+## 
+## Test results: 
+##    t-statistic:  15.14 
+##    degrees of freedom:  1578 
+##    p-value:  &lt;.001 
+## 
+## Other information: 
+##    two-sided 95% confidence interval:  [44.705, 44.915] 
+##    estimated effect size (Cohen&#39;s d):  0.381</code></pre>
 <p>Part IV - WEIGHT</p>
 <pre class="r"><code>ecls &lt;- import(here(&quot;data&quot;, &quot;ecls-k-sub.csv&quot;))
 ecls$X1WEIGHT[ecls$X1WEIGHT&lt;0] &lt;- NA
 
-t.test(x = ecls$X1WEIGHT,
-       alternative = &quot;two.sided&quot;,
-       mu = 47)</code></pre>
+oneSampleTTest(x = ecls$X1WEIGHT,
+               mu = 47,
+               one.sided = FALSE)</code></pre>
+<pre><code>## Warning in oneSampleTTest(x = ecls$X1WEIGHT, mu = 47, one.sided = FALSE): 240
+## case(s) removed due to missingness</code></pre>
 <pre><code>## 
-##  One Sample t-test
+##    One sample t-test 
 ## 
-## data:  ecls$X1WEIGHT
-## t = 1.5064, df = 1578, p-value = 0.1322
-## alternative hypothesis: true mean is not equal to 47
-## 95 percent confidence interval:
-##  46.89840 47.77424
-## sample estimates:
-## mean of x 
-##  47.33632</code></pre>
-<pre class="r"><code>x_bar &lt;- describe(ecls$X1WEIGHT)$mean
-sigma_hat &lt;- describe(ecls$X1WEIGHT)$sd
-
-(x_bar - 47)/sigma_hat</code></pre>
-<pre><code>## [1] 0.03790955</code></pre>
+## Data variable:   ecls$X1WEIGHT 
+## 
+## Descriptive statistics: 
+##             X1WEIGHT
+##    mean       47.336
+##    std dev.    8.872
+## 
+## Hypotheses: 
+##    null:        population mean equals 47 
+##    alternative: population mean not equal to 47 
+## 
+## Test results: 
+##    t-statistic:  1.506 
+##    degrees of freedom:  1578 
+##    p-value:  0.132 
+## 
+## Other information: 
+##    two-sided 95% confidence interval:  [46.898, 47.774] 
+##    estimated effect size (Cohen&#39;s d):  0.038</code></pre>
 
 
 
